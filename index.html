@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Locality CSV Adapter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <h1>Locality CSV Adapter</h1>
+    <p class="lead">
+      Перетворює Google Sheets / Excel / Word / PDF → у CSV для плагіна
+      <strong>Locality</strong>: <code>key,ru,en,tr,...</code>
+    </p>
+  </header>
+
+  <main class="wrapper">
+
+    <!-- STEP 1: INPUT -->
+    <section class="card">
+      <h2>1. Джерело перекладів</h2>
+      <div class="tabs">
+        <button class="tab active" data-tab="url">🔗 Google Sheets</button>
+        <button class="tab" data-tab="file">📁 Файл (xlsx / docx / pdf / csv)</button>
+        <button class="tab" data-tab="paste">📋 Вставити CSV</button>
+      </div>
+
+      <div class="tab-content" id="tab-url">
+        <label>Public Google Sheets URL:</label>
+        <input type="text" id="sheet-url"
+          placeholder="https://docs.google.com/spreadsheets/d/.../edit  або  /pub?output=csv">
+        <div class="hint">
+          Якщо вставите <code>/edit</code> URL — інструмент спробує перетворити на публічний CSV.
+          Якщо ваш Sheet приватний, перейдіть у <em>Файл → Поділитися → Опублікувати в інтернеті → CSV</em>
+          і вставте отриманий <code>/pub?output=csv</code> URL.
+        </div>
+      </div>
+
+      <div class="tab-content hidden" id="tab-file">
+        <label for="csv-file">Виберіть файл:</label>
+        <input type="file" id="csv-file"
+          accept=".csv,.tsv,.txt,.xlsx,.xls,.xlsm,.docx,.pdf">
+        <div class="hint">
+          Підтримуються: <code>.csv</code>, <code>.tsv</code>, <code>.xlsx</code>,
+          <code>.xls</code>, <code>.docx</code>, <code>.pdf</code>.
+          Для Word/PDF читається перша таблиця документу.
+        </div>
+        <div id="file-info" class="hint"></div>
+
+        <div id="sheet-picker-row" class="hidden" style="margin-top: 12px;">
+          <label for="sheet-picker">Оберіть аркуш:</label>
+          <select id="sheet-picker"></select>
+          <div class="hint">XLSX має кілька аркушів — оберіть той з перекладами.</div>
+        </div>
+      </div>
+
+      <div class="tab-content hidden" id="tab-paste">
+        <label>Вставте сюди CSV / TSV / табуляційні дані:</label>
+        <textarea id="csv-text" rows="10" placeholder="key,ru,en,tr&#10;title,Майская жара,May Heat,MAYIS SICAĞI&#10;..."></textarea>
+      </div>
+
+      <div class="actions">
+        <button id="parse-btn" class="primary">Розібрати →</button>
+        <button id="sample-btn" class="secondary">Приклад</button>
+      </div>
+
+      <div id="parse-error" class="error hidden"></div>
+      <div id="parse-info" class="hint"></div>
+    </section>
+
+    <!-- STEP 2: MAPPING -->
+    <section class="card hidden" id="mapping-card">
+      <h2>2. Перевірте мепинг</h2>
+      <p class="hint">
+        Автоматично визначили мови та ключі. Виправте якщо щось не так.
+      </p>
+
+      <div class="mapping-stats" id="mapping-stats"></div>
+
+      <h3>Колонки мов</h3>
+      <table class="map-table" id="lang-map"></table>
+
+      <h3>Ключі (рядки)</h3>
+      <table class="map-table" id="key-map"></table>
+    </section>
+
+    <!-- STEP 3: OUTPUT -->
+    <section class="card hidden" id="output-card">
+      <h2>3. Готовий CSV для Locality</h2>
+      <div class="output-meta" id="output-meta"></div>
+      <pre id="output-csv"></pre>
+      <div class="actions">
+        <button id="download-btn" class="primary">⬇ Завантажити locs.csv</button>
+        <button id="copy-btn" class="secondary">📋 Копіювати</button>
+      </div>
+      <div id="copy-status" class="hint"></div>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    Locality CSV Adapter · повністю клієнтський, нічого не йде на сервер.
+  </footer>
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    }
+  </script>
+  <script src="adapter.js"></script>
+</body>
+</html>

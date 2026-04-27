@@ -1,0 +1,19 @@
+# Local test files (not for repo)
+test.xlsx
+test.csv
+test.docx
+test.pdf
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs
+*.log
