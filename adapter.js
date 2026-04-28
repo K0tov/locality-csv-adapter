@@ -225,6 +225,21 @@ function suggestLangCode(headerCell) {
   // try first word
   const first = norm.split(/[\s/,]/)[0];
   if (LANG_ALIASES[first]) return LANG_ALIASES[first];
+
+  // Variant patterns: "Match 1", "Variant 2", "V1", "Var 3" → slug.
+  // Treat as a generic campaign variant — pass through with normalized code.
+  const variantPattern = /^(match|variant|var|v|вариант|варіант|матч)\s*\.?\s*(\d+)$/i;
+  const m = norm.match(variantPattern);
+  if (m) {
+    const prefix = m[1].toLowerCase();
+    const num = m[2];
+    // Map common variant prefixes to short slugs
+    const prefixSlug =
+      { match: "match", матч: "match", v: "v", var: "v", variant: "v", вариант: "v", варіант: "v" }[prefix] ||
+      prefix;
+    return `${prefixSlug}_${num}`;
+  }
+
   return null;
 }
 
