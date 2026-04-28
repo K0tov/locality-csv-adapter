@@ -137,22 +137,32 @@
             Окрім локалізацій, плагін підтримує <strong>варіанти кампаній</strong> —
             наприклад різні матчі, дати, промокоди на одному дизайні.
           </p>
+
+          <h3 style="margin-top:0">Один рядок CSV = один текстовий шар</h3>
+          <p style="color: var(--text-muted); font-size: 13px; margin-top: 0">
+            Якщо в банері <strong>дві окремі команди ліворуч і праворуч</strong> —
+            у CSV це <strong>два окремі рядки</strong> <code>team_1</code> і <code>team_2</code>,
+            а не один <code>match</code> з текстом «Manchester vs Arsenal».
+          </p>
+
           <table class="howto-table">
             <thead>
               <tr><th>key</th><th>Match 1</th><th>Match 2</th><th>Match 3</th></tr>
             </thead>
             <tbody>
-              <tr><td>match</td><td>Manchester vs Arsenal</td><td>Barcelona vs PSG</td><td>Real vs Bayern</td></tr>
+              <tr><td>team_1</td><td>Manchester</td><td>Barcelona</td><td>Real</td></tr>
+              <tr><td>team_2</td><td>Arsenal</td><td>PSG</td><td>Bayern</td></tr>
               <tr><td>date</td><td>21.05.2026</td><td>28.05.2026</td><td>05.06.2026</td></tr>
               <tr><td>promo</td><td>MAY100</td><td>MAY200</td><td>JUNE50</td></tr>
               <tr><td>title</td><td>Гарячий тиждень</td><td>Топ-матч</td><td>Фінал</td></tr>
             </tbody>
           </table>
           <ul class="howto">
-            <li>Адаптер розпізнає патерни <code>Match N</code>, <code>Variant N</code>, <code>V1/V2</code>, <code>Матч N</code>, <code>Варіант N</code>.</li>
-            <li>Плагін генерує групи <code>Loc/MATCH_1</code>, <code>Loc/MATCH_2</code>, <code>Loc/MATCH_3</code> — кожна копія майстра з заміненими `match`, `date`, `promo` тощо.</li>
+            <li>Адаптер розпізнає патерни <code>Match N</code>, <code>Variant N</code>, <code>V1/V2</code>, <code>Матч N</code>, <code>Варіант N</code> — автоматично мепить у <code>match_1</code>, <code>v_2</code>...</li>
+            <li>Плагін генерує групи <code>Loc/MATCH_1</code>, <code>Loc/MATCH_2</code>... — кожна копія майстра з заміненими текстами.</li>
+            <li>У PSD-майстрі мають бути окремі шари: <code>team_1</code>, <code>team_2</code>, <code>date</code>, <code>promo</code>, <code>title</code> — точно як ключі в CSV.</li>
             <li>RTL і авто-Noto не вмикаються (це не мови) — використовується брендовий шрифт майстра.</li>
-            <li>Можна навіть комбінувати з мовами: колонки <code>ru_match_1, ru_match_2, en_match_1</code> створять матрицю <code>Loc/RU_MATCH_1, Loc/RU_MATCH_2, Loc/EN_MATCH_1</code>.</li>
+            <li>Можна комбінувати з мовами: <code>ru_match_1, ru_match_2, en_match_1</code> створять матрицю <code>Loc/RU_MATCH_1, Loc/RU_MATCH_2, Loc/EN_MATCH_1</code>.</li>
           </ul>
         </section>
 
@@ -164,14 +174,26 @@
         ├── title            (текстовий шар)
         ├── subtitle         (текстовий шар)
         ├── cta              (текстовий шар)
-        ├── match            (опційно — для варіантів)
-        ├── date             (опційно)
-        └── promo            (опційно)</pre>
+        ├── team_1           (опційно — для варіантів)
+        ├── team_2
+        ├── date
+        └── promo</pre>
           <ul class="howto">
-            <li><strong>Імена шарів</strong> точно як ключі в CSV: <code>title</code>, <code>cta</code>, з малої букви, без зайвих пробілів.</li>
+            <li><strong>Імена шарів точно як ключі в CSV:</strong> <code>title</code>, <code>cta</code>, <code>team_1</code> — з малої букви, з підкресленням, <strong>без зайвих пробілів</strong>.</li>
             <li><strong>Майстер може містити будь-що:</strong> картинки, smart-objects, ефекти, маски — все скопіюється.</li>
-            <li><strong>Виділіть майстер</strong> у Layers panel перед Apply, або виділіть обгортку <code>Loc</code> — плагін сам знайде майстер всередині.</li>
-            <li><strong>Один <code>Ctrl+Z</code></strong> скасовує всю генерацію (32 мовні групи зникнуть одним кроком).</li>
+            <li><strong>Виділіть майстер</strong> у Layers panel перед Apply. Або виділіть обгортку <code>Loc</code> — плагін сам знайде майстер всередині.</li>
+            <li><strong>Один <code>Ctrl+Z</code></strong> скасовує всю генерацію одним кроком.</li>
+          </ul>
+
+          <h3 style="margin-top: 24px">⚠ Уважно з іменами шарів</h3>
+          <p style="color: var(--text-muted); font-size: 13px">
+            Photoshop часто залишає <strong>невидимі пробіли</strong> в кінці імені після
+            редагування. Ім'я <code>team_1&nbsp;</code> (з пробілом) ≠ <code>team_1</code> (без).
+          </p>
+          <ul class="howto">
+            <li><strong>Безпечний спосіб:</strong> подвійний клік на ім'я шару → <code>Ctrl+A</code> → <code>Delete</code> → впишіть свіже ім'я → Enter.</li>
+            <li><strong>Швидка перевірка:</strong> подвійний клік → <code>End</code> → курсор у кінці. Якщо є пробіл — побачите.</li>
+            <li><strong>Якщо переклад не підставляється</strong> — гляньте лог плагіна. Там буде <code>[warn] "MATCH_1/team_1 " has no translation</code> з точним ім'ям шару (включно з зайвими пробілами).</li>
           </ul>
         </section>
 
@@ -194,6 +216,12 @@
 
             <dt>Не розпізналась мова з мого шиту</dt>
             <dd>Впишіть код руками у поле <code>ISO КОД</code>. Адаптер запам'ятає для цього сеансу. Або скиньте назву — додамо у словник.</dd>
+
+            <dt>Apply створив групи, але переклади не підставились</dt>
+            <dd>Гляньте лог плагіна — там буде <code>[warn] ".../team_1&nbsp;" has no translation</code> з точним ім'ям шару у PSD. Найчастіше у назві прихований пробіл. Перейменуйте шар (подвійний клік → Ctrl+A → Delete → впишіть заново).</dd>
+
+            <dt>Дві окремі команди в одному банері</dt>
+            <dd>Якщо в дизайні два візуально окремі текстові шари (ліва команда / права команда) — у CSV це <strong>два рядки</strong>: <code>team_1</code> та <code>team_2</code>. Не один <code>match</code> з текстом «Manchester vs Arsenal».</dd>
           </dl>
         </section>
 
