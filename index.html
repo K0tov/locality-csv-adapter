@@ -8,14 +8,46 @@
 </head>
 <body>
   <header class="hero">
-    <h1>Locality CSV Adapter</h1>
-    <p class="lead">
-      Перетворює Google Sheets / Excel / Word / PDF → у CSV для плагіна
-      <strong>Locality</strong>: <code>key,ru,en,tr,...</code>
-    </p>
+    <div class="hero-inner">
+      <div class="hero-icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="26" stroke="currentColor" stroke-width="3"/>
+          <ellipse cx="32" cy="32" rx="10" ry="26" stroke="currentColor" stroke-width="3"/>
+          <line x1="6" y1="32" x2="58" y2="32" stroke="currentColor" stroke-width="3"/>
+        </svg>
+      </div>
+      <h1>Locality CSV Adapter</h1>
+      <p class="lead">
+        Будь-який шит → CSV для плагіна <strong>Locality</strong>
+      </p>
+      <div class="hero-formats">
+        <span class="fmt-badge">Google Sheets</span>
+        <span class="fmt-badge">Excel</span>
+        <span class="fmt-badge">Word</span>
+        <span class="fmt-badge">PDF</span>
+        <span class="fmt-badge">CSV / TSV</span>
+      </div>
+    </div>
   </header>
 
   <main class="wrapper">
+
+    <!-- Step indicator -->
+    <ol class="steps" id="steps">
+      <li class="step is-active" data-step="1">
+        <div class="step-num">1</div>
+        <div class="step-label">Джерело</div>
+      </li>
+      <li class="step" data-step="2">
+        <div class="step-num">2</div>
+        <div class="step-label">Мепинг</div>
+      </li>
+      <li class="step" data-step="3">
+        <div class="step-num">3</div>
+        <div class="step-label">CSV готовий</div>
+      </li>
+    </ol>
+
 
     <!-- STEP 1: INPUT -->
     <section class="card">

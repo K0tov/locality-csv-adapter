@@ -194,6 +194,16 @@ const RESERVED = new Set(["key", "font_family"]);
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
+// Visual step indicator state. activeStep is 1, 2, or 3.
+function setStep(activeStep) {
+  document.querySelectorAll(".step").forEach((el) => {
+    const num = parseInt(el.dataset.step, 10);
+    el.classList.remove("is-active", "is-done");
+    if (num < activeStep) el.classList.add("is-done");
+    else if (num === activeStep) el.classList.add("is-active");
+  });
+}
+
 function normalizeName(s) {
   return String(s || "")
     .trim()
@@ -592,6 +602,7 @@ $("#parse-btn").addEventListener("click", async () => {
     rebuildOutput();
     $("#mapping-card").classList.remove("hidden");
     $("#output-card").classList.remove("hidden");
+    setStep(3);
     $("#mapping-card").scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (e) {
     errorEl.textContent = e.message || String(e);
