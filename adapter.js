@@ -578,6 +578,16 @@ $("#parse-btn").addEventListener("click", async () => {
     state.headers = state.rawRows[0];
 
     buildMapping();
+
+    // Heuristic warning: if no key column auto-detected, tell user.
+    const okKeys = state.keyMap.filter((m) => m.key && !m.skip).length;
+    if (okKeys === 0 && state.keyMap.length > 0) {
+      const sampleVal = String(state.keyMap[0].original || "(порожньо)").slice(0, 60);
+      $("#parse-info").textContent =
+        `⚠ Не знайдено колонку «key». У першій колонці шиту: «${sampleVal}». ` +
+        `Додайте перший стовпчик зі значеннями title / subtitle / cta — або вручну впишіть ключі у таблиці нижче.`;
+    }
+
     renderMapping();
     rebuildOutput();
     $("#mapping-card").classList.remove("hidden");
@@ -595,16 +605,24 @@ $("#parse-btn").addEventListener("click", async () => {
 // ---------- Build mapping from parsed rows ---------------------------
 
 function buildMapping() {
-  // Language columns: skip column 0 (key column)
-  state.langMap = state.headers.slice(1).map((h, i) => {
-    const code = suggestLangCode(h);
-    return {
-      colIndex: i + 1,
-      original: h,
+  // Language columns: skip column 0 (key column).
+  // Auto-skip columns whose header is empty AND data column is empty across all rows
+  // (those are leading/trailing padding columns).
+  state.langMap = [];
+  for (let i = 1; i < state.headers.length; i++) {
+    const header = state.headers[i];
+    const hasContent =
+      String(header || "").trim() ||
+      state.rawRows.some((row) => String(row[i] || "").trim());
+    if (!hasContent) continue; // truly empty column — drop entirely
+    const code = suggestLangCode(header);
+    state.langMap.push({
+      colIndex: i,
+      original: header,
       code: code || "",
-      skip: !code, // skip by default if no auto-mapping
-    };
-  });
+      skip: !code,
+    });
+  }
 
   // Key rows: rows 1..n
   state.keyMap = state.rawRows.slice(1).map((row, i) => {
