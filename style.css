@@ -660,6 +660,303 @@ button:disabled {
   transition: opacity var(--transition);
 }
 
+/* ============ HERO ACTIONS ============ */
+.hero-actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-link {
+  background: rgba(91, 141, 239, 0.08);
+  border: 1px solid rgba(91, 141, 239, 0.25);
+  color: var(--accent-bright);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all var(--transition);
+}
+
+.hero-link:hover {
+  background: rgba(91, 141, 239, 0.15);
+  border-color: rgba(91, 141, 239, 0.45);
+  transform: translateY(-1px);
+}
+
+.help-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
+/* ============ MODAL ============ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+  animation: fade-in 0.2s ease-out;
+}
+
+.modal-overlay.hidden { display: none; }
+
+.modal {
+  background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-elevated-2) 100%);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 720px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  animation: modal-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modal-pop {
+  from { opacity: 0; transform: scale(0.92) translateY(-12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 22px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  z-index: 1;
+}
+
+.modal-close:hover {
+  background: rgba(255, 94, 108, 0.15);
+  border-color: rgba(255, 94, 108, 0.4);
+  color: #ff8a93;
+  transform: rotate(90deg);
+}
+
+.modal-header {
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.modal-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.modal-tabs {
+  display: flex;
+  padding: 6px;
+  background: var(--bg-input);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.modal-tabs::-webkit-scrollbar { height: 0; }
+
+.modal-tab {
+  flex: 1 0 auto;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.modal-tab:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.modal-tab.active {
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+}
+
+.modal-body {
+  padding: 24px 28px 28px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.modal-body::-webkit-scrollbar { width: 8px; }
+.modal-body::-webkit-scrollbar-track { background: transparent; }
+.modal-body::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.mtab-content.hidden { display: none; }
+
+.mtab-content > p:first-child {
+  margin-top: 0;
+  color: var(--text-muted);
+}
+
+.howto {
+  margin: 0 0 0;
+  padding: 0 0 0 22px;
+  list-style: none;
+  counter-reset: step-counter;
+}
+
+.howto li {
+  position: relative;
+  margin-bottom: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.howto[start], .howto:not(ul) {
+  counter-reset: step-counter;
+}
+
+ol.howto > li {
+  counter-increment: step-counter;
+}
+
+ol.howto > li::before {
+  content: counter(step-counter);
+  position: absolute;
+  left: -28px;
+  top: 1px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+ul.howto > li {
+  list-style: disc;
+  list-style-position: outside;
+  margin-left: 4px;
+}
+
+.howto-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 12px 0 16px;
+  font-size: 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.howto-table th {
+  background: var(--bg-elevated-2);
+  color: var(--accent-bright);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.howto-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+}
+
+.howto-table tr:last-child td { border-bottom: none; }
+.howto-table td:first-child {
+  color: var(--accent-bright);
+  font-weight: 600;
+}
+
+.howto-pre {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text);
+  margin: 12px 0 16px;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.howto-faq {
+  margin: 0;
+}
+
+.howto-faq dt {
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 14px;
+  margin-bottom: 6px;
+}
+
+.howto-faq dt:first-child {
+  margin-top: 0;
+}
+
+.howto-faq dd {
+  margin: 0 0 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+  padding-left: 0;
+}
+
 /* ============ FOOTER ============ */
 .foot {
   text-align: center;

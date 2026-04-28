@@ -60,8 +60,146 @@
         <span class="fmt-badge">PDF</span>
         <span class="fmt-badge">CSV / TSV</span>
       </div>
+      <div class="hero-actions">
+        <button id="help-btn" class="hero-link" type="button">
+          <span class="help-icon">?</span>
+          Як користуватись
+        </button>
+      </div>
     </div>
   </header>
+
+  <!-- HELP MODAL -->
+  <div class="modal-overlay hidden" id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <div class="modal">
+      <button class="modal-close" id="help-close" aria-label="Закрити">×</button>
+      <div class="modal-header">
+        <h2 id="help-title">Як користуватись адаптером</h2>
+        <p>За 4 кроки: шит → CSV → плагін Locality → банери в PSD.</p>
+      </div>
+
+      <nav class="modal-tabs">
+        <button class="modal-tab active" data-mtab="quick">⚡ Швидкий старт</button>
+        <button class="modal-tab" data-mtab="format">📋 Формат CSV</button>
+        <button class="modal-tab" data-mtab="variants">🎯 Варіанти</button>
+        <button class="modal-tab" data-mtab="psd">🎨 PSD</button>
+        <button class="modal-tab" data-mtab="faq">❓ FAQ</button>
+      </nav>
+
+      <div class="modal-body">
+
+        <section class="mtab-content" id="mtab-quick">
+          <ol class="howto">
+            <li>
+              <strong>Підготуйте дані.</strong> Google Sheets / Excel з ключами в колонці A
+              і мовами (або варіантами) у наступних колонках.
+            </li>
+            <li>
+              <strong>Завантажте у адаптер.</strong> Виберіть джерело: Google Sheets URL,
+              файл .xlsx/.docx/.pdf, або вставте CSV руками. Натисніть <code>Розібрати</code>.
+            </li>
+            <li>
+              <strong>Перевірте мепинг.</strong> Адаптер автоматично визначить мови
+              і ключі (зелені бейджі = ОК). Якщо щось жовте — впишіть код руками.
+            </li>
+            <li>
+              <strong>Завантажте <code>locs.csv</code>.</strong> Або скопіюйте у буфер.
+            </li>
+            <li>
+              <strong>У Photoshop:</strong> плагін Locality → <code>Choose CSV…</code> →
+              виділіть майстер-групу → відмітьте мови → <code>Apply</code>.
+            </li>
+          </ol>
+        </section>
+
+        <section class="mtab-content hidden" id="mtab-format">
+          <p>Адаптер очікує таку структуру:</p>
+          <table class="howto-table">
+            <thead>
+              <tr><th>key</th><th>ru</th><th>en</th><th>tr</th><th>...</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>title</td><td>Майська спека</td><td>May Heat</td><td>MAYIS SICAĞI</td><td>...</td></tr>
+              <tr><td>subtitle</td><td>Гарячі перемоги</td><td>Red-hot wins</td><td>ATEŞLİ KAZANÇLAR</td><td>...</td></tr>
+              <tr><td>cta</td><td>Грати</td><td>Play</td><td>OYNA</td><td>...</td></tr>
+            </tbody>
+          </table>
+          <ul class="howto">
+            <li><strong>Колонка A = <code>key</code>.</strong> Значення мають точно збігатися з іменами текстових шарів у PSD (<code>title</code>, <code>subtitle</code>, <code>cta</code>, <code>bonus</code>...).</li>
+            <li><strong>Колонки B+ = мови.</strong> ISO коди (<code>ru</code>, <code>en</code>, <code>tr</code>) або назви мов (<code>Русский</code>, <code>Англійська</code>, <code>English</code>) — адаптер розпізнає.</li>
+            <li><strong>Опційна колонка <code>font_family</code></strong> — PostScript-ім'я шрифту що перевизначить шрифт майстра для конкретного рядка.</li>
+            <li><strong>Порожні клітинки</strong> пропускаються з логом, не падає.</li>
+          </ul>
+        </section>
+
+        <section class="mtab-content hidden" id="mtab-variants">
+          <p>
+            Окрім локалізацій, плагін підтримує <strong>варіанти кампаній</strong> —
+            наприклад різні матчі, дати, промокоди на одному дизайні.
+          </p>
+          <table class="howto-table">
+            <thead>
+              <tr><th>key</th><th>Match 1</th><th>Match 2</th><th>Match 3</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>match</td><td>Manchester vs Arsenal</td><td>Barcelona vs PSG</td><td>Real vs Bayern</td></tr>
+              <tr><td>date</td><td>21.05.2026</td><td>28.05.2026</td><td>05.06.2026</td></tr>
+              <tr><td>promo</td><td>MAY100</td><td>MAY200</td><td>JUNE50</td></tr>
+              <tr><td>title</td><td>Гарячий тиждень</td><td>Топ-матч</td><td>Фінал</td></tr>
+            </tbody>
+          </table>
+          <ul class="howto">
+            <li>Адаптер розпізнає патерни <code>Match N</code>, <code>Variant N</code>, <code>V1/V2</code>, <code>Матч N</code>, <code>Варіант N</code>.</li>
+            <li>Плагін генерує групи <code>Loc/MATCH_1</code>, <code>Loc/MATCH_2</code>, <code>Loc/MATCH_3</code> — кожна копія майстра з заміненими `match`, `date`, `promo` тощо.</li>
+            <li>RTL і авто-Noto не вмикаються (це не мови) — використовується брендовий шрифт майстра.</li>
+            <li>Можна навіть комбінувати з мовами: колонки <code>ru_match_1, ru_match_2, en_match_1</code> створять матрицю <code>Loc/RU_MATCH_1, Loc/RU_MATCH_2, Loc/EN_MATCH_1</code>.</li>
+          </ul>
+        </section>
+
+        <section class="mtab-content hidden" id="mtab-psd">
+          <p>Структура майстер-PSD:</p>
+          <pre class="howto-pre">Document
+└── Loc                    ← обгортка (плагін створить сам)
+    └── Master              ← ваша майстер-група
+        ├── title            (текстовий шар)
+        ├── subtitle         (текстовий шар)
+        ├── cta              (текстовий шар)
+        ├── match            (опційно — для варіантів)
+        ├── date             (опційно)
+        └── promo            (опційно)</pre>
+          <ul class="howto">
+            <li><strong>Імена шарів</strong> точно як ключі в CSV: <code>title</code>, <code>cta</code>, з малої букви, без зайвих пробілів.</li>
+            <li><strong>Майстер може містити будь-що:</strong> картинки, smart-objects, ефекти, маски — все скопіюється.</li>
+            <li><strong>Виділіть майстер</strong> у Layers panel перед Apply, або виділіть обгортку <code>Loc</code> — плагін сам знайде майстер всередині.</li>
+            <li><strong>Один <code>Ctrl+Z</code></strong> скасовує всю генерацію (32 мовні групи зникнуть одним кроком).</li>
+          </ul>
+        </section>
+
+        <section class="mtab-content hidden" id="mtab-faq">
+          <dl class="howto-faq">
+            <dt>Чи мої дані йдуть на сервер?</dt>
+            <dd>Ні, все працює у вашому браузері (JavaScript). Адаптер не надсилає жодного байта на сервер. Можна перевірити DevTools → Network.</dd>
+
+            <dt>Sheet приватний, не вантажиться</dt>
+            <dd>CORS блокує крос-доменні запити до приватних шитів. Опублікуйте через <em>Файл → Поділитися → Опублікувати в інтернеті → CSV</em>, або експортуйте у xlsx і завантажте файл.</dd>
+
+            <dt>Excel з кількома аркушами</dt>
+            <dd>Адаптер автоматично покаже dropdown зі списком аркушів і обере найбільший за замовчуванням. Можна вибрати інший вручну.</dd>
+
+            <dt>PDF не парситься правильно</dt>
+            <dd>PDF не зберігає семантику таблиць — це просто текст з координатами. Якщо результат поганий, експортуйте як xlsx з оригіналу.</dd>
+
+            <dt>Що таке UTF-8 BOM в завантаженому CSV?</dt>
+            <dd>Перші 3 байти <code>EF BB BF</code> — мітка для Excel що файл UTF-8. Без них Excel показує кирилицю як <code>?????</code>. Плагін Locality читає BOM коректно.</dd>
+
+            <dt>Не розпізналась мова з мого шиту</dt>
+            <dd>Впишіть код руками у поле <code>ISO КОД</code>. Адаптер запам'ятає для цього сеансу. Або скиньте назву — додамо у словник.</dd>
+          </dl>
+        </section>
+
+      </div>
+    </div>
+  </div>
 
   <main class="wrapper">
 

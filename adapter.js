@@ -266,6 +266,46 @@ const state = {
   outputCsv: "",
 };
 
+// ---------- Help modal ------------------------------------------------
+
+function openHelp() {
+  $("#help-modal").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeHelp() {
+  $("#help-modal").classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+const helpBtn = document.getElementById("help-btn");
+const helpClose = document.getElementById("help-close");
+const helpModal = document.getElementById("help-modal");
+
+if (helpBtn) helpBtn.addEventListener("click", openHelp);
+if (helpClose) helpClose.addEventListener("click", closeHelp);
+if (helpModal) {
+  helpModal.addEventListener("click", (e) => {
+    if (e.target === helpModal) closeHelp();
+  });
+}
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && helpModal && !helpModal.classList.contains("hidden")) {
+    closeHelp();
+  }
+});
+
+// Modal tabs
+document.querySelectorAll(".modal-tab").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".modal-tab").forEach((b) => b.classList.remove("active"));
+    document.querySelectorAll(".mtab-content").forEach((c) => c.classList.add("hidden"));
+    btn.classList.add("active");
+    const target = document.getElementById("mtab-" + btn.dataset.mtab);
+    if (target) target.classList.remove("hidden");
+  });
+});
+
 // ---------- Tabs ------------------------------------------------------
 
 $$(".tab").forEach((btn) => {
