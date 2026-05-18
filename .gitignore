@@ -3,6 +3,11 @@ test.xlsx
 test.csv
 test.docx
 test.pdf
+_test-*
+
+# npm (test-only dependency for ad-hoc node scripts)
+node_modules/
+package-lock.json
 
 # OS junk
 .DS_Store

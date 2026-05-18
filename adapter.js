@@ -538,6 +538,49 @@ function isTransposed(rows) {
   );
 }
 
+// Drop columns whose values are mostly banner-dim noise ("120x240",
+// "320х100 моб", "640x320", etc.). Marketing sheets often append a wide
+// matrix listing which banner sizes exist per locale — that data is
+// irrelevant for translation and confuses transpose detection and
+// key-row extraction. A column is dropped when:
+//   • its header matches NOISE_RE, OR
+//   • 80%+ of its non-empty cells match NOISE_RE.
+// Returns the rows with noise columns removed and a count of how many
+// columns were dropped (for parse-info reporting).
+function stripNoiseColumns(rows) {
+  if (!rows || rows.length === 0) return { rows, dropped: 0 };
+  const numCols = Math.max(...rows.map((r) => r.length));
+  const keepCols = [];
+  // Scan the top 3 rows for a banner-dim header — sheets often have
+  // multiple header rows (slide names + sub-labels) before data.
+  const headerRows = rows.slice(0, Math.min(3, rows.length));
+  for (let c = 0; c < numCols; c++) {
+    const nonEmpty = rows
+      .map((r) => String(r[c] || "").trim())
+      .filter(Boolean);
+    if (nonEmpty.length === 0) {
+      // truly-empty column — drop silently
+      continue;
+    }
+    // If ANY of the top 3 header rows has a banner-dim cell in this
+    // column, the column is a banner-availability matrix entry, not a
+    // translation column — drop unconditionally even if stray cells
+    // below have other text (e.g. an appearance label like "темношкірий"
+    // inside a banner-dim column).
+    const headerIsNoise = headerRows.some((r) => isNoiseCell(r[c]));
+    if (headerIsNoise) continue;
+    // Fallback: drop columns where 80%+ of non-empty cells are
+    // banner-dim noise.
+    const noiseCount = nonEmpty.filter((v) => isNoiseCell(v)).length;
+    if (noiseCount / nonEmpty.length < 0.8) {
+      keepCols.push(c);
+    }
+  }
+  if (keepCols.length === numCols) return { rows, dropped: 0 };
+  const trimmed = rows.map((r) => keepCols.map((c) => (r[c] == null ? "" : r[c])));
+  return { rows: trimmed, dropped: numCols - keepCols.length };
+}
+
 // Returns true if column 0 contains only short codes (1-2 chars) across
 // the data rows — typical for gender markers (Н/Ж, M/F) that don't
 // belong in the translation matrix.
@@ -888,9 +931,19 @@ function stripLeadingTitleRows(rows) {
   for (let i = 0; i < scanLimit; i++) {
     const cells = rows[i].slice(1).filter((c) => String(c || "").trim());
     if (cells.length < 2) continue;
-    const keyHits = cells.filter(
-      (v) => KEY_ALIASES[normalizeName(v)] || /^step\s*\d+$/i.test(String(v).trim())
-    ).length;
+    const keyHits = cells.filter((v) => {
+      const s = String(v).trim();
+      return (
+        KEY_ALIASES[normalizeName(v)] ||
+        /^step\s*\d+$/i.test(s) ||
+        // "slide 2", "слайд 3"
+        /^(slide|слайд)\s*\d+$/i.test(s) ||
+        // "1st slide", "2nd Slide"
+        /^\d+(?:st|nd|rd|th)?\s+slide$/i.test(s) ||
+        // "match 1", "variant 2", "v1"
+        /^(match|variant|var|v|вариант|варіант|матч)\s*\.?\s*\d+$/i.test(s)
+      );
+    }).length;
     const ratio = keyHits / cells.length;
     if (ratio >= 0.5 && keyHits > bestScore) {
       bestScore = keyHits;
@@ -1011,6 +1064,15 @@ $("#parse-btn").addEventListener("click", async () => {
       throw new Error("Замало непорожніх рядків після очищення");
     }
 
+    // Smart-drop columns whose contents are mostly banner-dim noise
+    // ("120x240", "320х100 моб", "640x320"). Casino marketing sheets
+    // often append a wide format-availability matrix that's irrelevant
+    // for translation — clearing it first lets transpose detection and
+    // header-row scanning see only meaningful columns.
+    const noiseResult = stripNoiseColumns(state.rawRows);
+    state.rawRows = noiseResult.rows;
+    const droppedNoiseCols = noiseResult.dropped;
+
     // Smart-strip metadata rows above the real key-header row.
     // E.g. row 1 = "appearance" hint, row 2 = actual keys (title/cta/step1...).
     const beforeStrip = state.rawRows.length;
@@ -1025,6 +1087,7 @@ $("#parse-btn").addEventListener("click", async () => {
     }
 
     const notes = [];
+    if (droppedNoiseCols > 0) notes.push(`${droppedNoiseCols} шумових колонок (banner-dim)`);
     if (droppedRows > 0) notes.push(`${droppedRows} метаданих рядок(ів)`);
     if (droppedFirstCol) notes.push(`перший стовпчик-маркер (Н/Ж/...)`);
     if (notes.length > 0) {
