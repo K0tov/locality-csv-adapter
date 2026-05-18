@@ -215,13 +215,92 @@ function normalizeName(s) {
     .replace(/[\s ]+/g, " ");
 }
 
+// ISO 3166-1 alpha-2 country code lookup by name. Lowercase normalized.
+const COUNTRY_CODES = {
+  argentina: "AR", chile: "CL", peru: "PE", mexico: "MX", ecuador: "EC",
+  bolivia: "BO", colombia: "CO", venezuela: "VE", uruguay: "UY", paraguay: "PY",
+  brazil: "BR", "brasil": "BR", portugal: "PT", spain: "ES",
+  france: "FR", germany: "DE", italy: "IT", poland: "PL", netherlands: "NL",
+  ukraine: "UA", russia: "RU", belarus: "BY",
+  turkey: "TR", azerbaijan: "AZ", "azerbaycan": "AZ",
+  kazakhstan: "KZ", kyrgyzstan: "KG", uzbekistan: "UZ", tajikistan: "TJ",
+  india: "IN", pakistan: "PK", bangladesh: "BD", "myanmar": "MM",
+  thailand: "TH", vietnam: "VN", indonesia: "ID", malaysia: "MY",
+  philippines: "PH", cambodia: "KH", laos: "LA",
+  japan: "JP", korea: "KR", china: "CN", "taiwan": "TW", "hong kong": "HK",
+  iran: "IR", iraq: "IQ", "saudi arabia": "SA", "uae": "AE", egypt: "EG",
+  jordan: "JO", lebanon: "LB", syria: "SY", qatar: "QA", kuwait: "KW",
+  bahrain: "BH", oman: "OM", yemen: "YE", morocco: "MA", tunisia: "TN",
+  algeria: "DZ", libya: "LY", sudan: "SD",
+  ethiopia: "ET", kenya: "KE", tanzania: "TZ", uganda: "UG", "south africa": "ZA",
+  nigeria: "NG", ghana: "GH", senegal: "SN", "ivory coast": "CI", "côte d'ivoire": "CI",
+  mali: "ML", "burkina faso": "BF", niger: "NE", togo: "TG", benin: "BJ",
+  cameroon: "CM", "congo brazzaville": "CG", "congo kinshasa": "CD", drc: "CD",
+  gabon: "GA", car: "CF", chad: "TD", "equatorial guinea": "GQ",
+  madagascar: "MG", mauritius: "MU", "guinea bissau": "GW", guinea: "GN",
+  somalia: "SO", "south sudan": "SS", eritrea: "ER", djibouti: "DJ",
+  mozambique: "MZ", angola: "AO", zambia: "ZM", zimbabwe: "ZW", "namibia": "NA",
+  uk: "GB", "great britain": "GB", britain: "GB", "united kingdom": "GB",
+  usa: "US", "united states": "US", canada: "CA", australia: "AU",
+  ireland: "IE", scotland: "GB", wales: "GB",
+  greece: "GR", cyprus: "CY", malta: "MT",
+  norway: "NO", sweden: "SE", denmark: "DK", finland: "FI", iceland: "IS",
+  estonia: "EE", latvia: "LV", lithuania: "LT",
+  czech: "CZ", "czech republic": "CZ", slovakia: "SK", hungary: "HU",
+  romania: "RO", bulgaria: "BG", serbia: "RS", croatia: "HR",
+  bosnia: "BA", slovenia: "SI", macedonia: "MK", albania: "AL", kosovo: "XK",
+  georgia: "GE", armenia: "AM",
+  mongolia: "MN", nepal: "NP", "sri lanka": "LK",
+  gambia: "GM",
+};
+
+function suggestCountryCode(name) {
+  const n = String(name || "").trim().toLowerCase();
+  if (!n) return null;
+  if (COUNTRY_CODES[n]) return COUNTRY_CODES[n];
+  // First multi-word match for multi-word country names
+  for (const country of Object.keys(COUNTRY_CODES)) {
+    if (n === country || n.startsWith(country + " ")) return COUNTRY_CODES[country];
+  }
+  return null;
+}
+
 function suggestLangCode(headerCell) {
   const norm = normalizeName(headerCell);
   if (!norm) return null;
   if (LANG_ALIASES[norm]) return LANG_ALIASES[norm];
-  // also strip "(...)" suffix
+
+  // Pattern "Country (language)" or "Country (language) + Landing" —
+  // pick language from parentheses AND combine with country for BCP 47 code.
+  const parenMatch = norm.match(/^([^(]+)\(([^)]+)\)/);
+  if (parenMatch) {
+    const countryName = parenMatch[1].trim();
+    const langName = parenMatch[2].trim().split(/[\s,]/)[0];
+    if (LANG_ALIASES[langName]) {
+      const langCode = LANG_ALIASES[langName];
+      // Try to extract country code — handle multi-country prefixes like
+      // "Senegal, Togo, Niger, Mali (french)" → take FIRST country.
+      const firstCountry = countryName.split(/[,;/]/)[0].trim();
+      const countryCode = suggestCountryCode(firstCountry);
+      return countryCode ? `${langCode}-${countryCode}` : langCode;
+    }
+  }
+
+  // Fallback: just parentheses content as language
+  const parenOnly = norm.match(/\(([^)]+)\)/);
+  if (parenOnly) {
+    const inside = parenOnly[1].trim().split(/[\s,]/)[0];
+    if (LANG_ALIASES[inside]) return LANG_ALIASES[inside];
+  }
+
+  // strip "(...)" suffix and try
   const stripped = norm.replace(/\s*\([^)]*\)\s*/g, "").trim();
   if (LANG_ALIASES[stripped]) return LANG_ALIASES[stripped];
+
+  // Strip " + Landing" / " + Lending" suffixes (common in casino sheets)
+  const noSuffix = stripped.replace(/\s*\+\s*lan?d[ie]ng\s*$/i, "").trim();
+  if (noSuffix !== stripped && LANG_ALIASES[noSuffix]) return LANG_ALIASES[noSuffix];
+
   // try first word
   const first = norm.split(/[\s/,]/)[0];
   if (LANG_ALIASES[first]) return LANG_ALIASES[first];
@@ -290,9 +369,19 @@ function suggestKey(cell) {
   const norm = normalizeName(cell);
   if (!norm) return null;
   if (KEY_ALIASES[norm]) return KEY_ALIASES[norm];
+
+  // Numbered step patterns: "step 1", "step1", "крок 2", "шаг 3"
+  const stepMatch = norm.match(/^(?:step|крок|шаг|stage)\s*\.?\s*(\d+)$/i);
+  if (stepMatch) return `step_${stepMatch[1]}`;
+
+  // Numbered slide patterns: "слайд 2", "slide 3"
+  const slideMatch = norm.match(/^(?:slide|слайд)\s*\.?\s*(\d+)$/i);
+  if (slideMatch) return `slide_${slideMatch[1]}`;
+
   // strip trailing/leading punctuation
   const cleaned = norm.replace(/^[^\p{L}]+|[^\p{L}]+$/gu, "");
   if (KEY_ALIASES[cleaned]) return KEY_ALIASES[cleaned];
+
   // last resort: latinize-friendly slug
   return cleaned.replace(/[^a-z0-9_]/g, "_").replace(/_+/g, "_").replace(/^_|_$/g, "") || null;
 }
@@ -574,7 +663,30 @@ function stripLeadingTitleRows(rows) {
     .slice(0, Math.min(20, rows.length))
     .map((r) => r.filter((c) => String(c || "").trim()).length);
   const median = [...counts].sort((a, b) => a - b)[Math.floor(counts.length / 2)];
-  // Drop leading rows where non-empty count is 1 AND median is much higher
+
+  // First, try to find a row in the top 10 that looks like a key-header row
+  // (many cells map to KEY_ALIASES like title/subtitle/cta/step).
+  // If found, drop everything above it.
+  const scanLimit = Math.min(10, rows.length);
+  let bestHeader = -1;
+  let bestScore = 0;
+  for (let i = 0; i < scanLimit; i++) {
+    const cells = rows[i].slice(1).filter((c) => String(c || "").trim());
+    if (cells.length < 2) continue;
+    const keyHits = cells.filter(
+      (v) => KEY_ALIASES[normalizeName(v)] || /^step\s*\d+$/i.test(String(v).trim())
+    ).length;
+    const ratio = keyHits / cells.length;
+    if (ratio >= 0.5 && keyHits > bestScore) {
+      bestScore = keyHits;
+      bestHeader = i;
+    }
+  }
+  if (bestHeader > 0) {
+    return rows.slice(bestHeader);
+  }
+
+  // Fallback: drop leading rows with single non-empty cell
   let drop = 0;
   while (drop < rows.length - 2) {
     const nonEmpty = rows[drop].filter((c) => String(c || "").trim()).length;
@@ -683,6 +795,17 @@ $("#parse-btn").addEventListener("click", async () => {
     if (state.rawRows.length < 2) {
       throw new Error("Замало непорожніх рядків після очищення");
     }
+
+    // Smart-strip metadata rows above the real key-header row.
+    // E.g. row 1 = "appearance" hint, row 2 = actual keys (title/cta/step1...).
+    const beforeStrip = state.rawRows.length;
+    state.rawRows = stripLeadingTitleRows(state.rawRows);
+    const droppedRows = beforeStrip - state.rawRows.length;
+    if (droppedRows > 0) {
+      $("#parse-info").textContent =
+        `ℹ Пропущено ${droppedRows} метаданих рядок(ів) зверху перед хедером.`;
+    }
+
     // Auto-detect transposed layout: if the FIRST COLUMN looks like
     // languages and the FIRST ROW (excl col 0) looks like KEYS,
     // the sheet is mirrored — flip it so the adapter sees the expected
