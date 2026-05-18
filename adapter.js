@@ -254,6 +254,158 @@ const COUNTRY_CODES = {
   gambia: "GM",
 };
 
+// Expand common language abbreviations to full names.
+const LANG_NAME_EXPAND = {
+  eng: "English",
+  english: "English",
+  russian: "Russian",
+  rus: "Russian",
+  ukrainian: "Ukrainian",
+  ukr: "Ukrainian",
+  spanish: "Spanish",
+  esp: "Spanish",
+  french: "French",
+  fra: "French",
+  fr: "French",
+  german: "German",
+  deu: "German",
+  italian: "Italian",
+  ita: "Italian",
+  portuguese: "Portuguese",
+  por: "Portuguese",
+  polish: "Polish",
+  pol: "Polish",
+  japanese: "Japanese",
+  jpn: "Japanese",
+  korean: "Korean",
+  kor: "Korean",
+  chinese: "Chinese",
+  zho: "Chinese",
+  arabic: "Arabic",
+  ara: "Arabic",
+  farsi: "Farsi",
+  persian: "Farsi",
+  fas: "Farsi",
+  urdu: "Urdu",
+  urd: "Urdu",
+  hebrew: "Hebrew",
+  heb: "Hebrew",
+  turkish: "Turkish",
+  tur: "Turkish",
+  azerbaijani: "Azerbaijani",
+  azeri: "Azerbaijani",
+  aze: "Azerbaijani",
+  kazakh: "Kazakh",
+  kaz: "Kazakh",
+  kyrgyz: "Kyrgyz",
+  kir: "Kyrgyz",
+  uzbek: "Uzbek",
+  uzb: "Uzbek",
+  tajik: "Tajik",
+  tgk: "Tajik",
+  georgian: "Georgian",
+  kat: "Georgian",
+  armenian: "Armenian",
+  hye: "Armenian",
+  hindi: "Hindi",
+  hin: "Hindi",
+  bengali: "Bengali",
+  bengal: "Bengali",
+  ben: "Bengali",
+  tamil: "Tamil",
+  tam: "Tamil",
+  sinhala: "Sinhala",
+  sin: "Sinhala",
+  thai: "Thai",
+  tha: "Thai",
+  vietnamese: "Vietnamese",
+  vie: "Vietnamese",
+  indonesian: "Indonesian",
+  ind: "Indonesian",
+  malay: "Malay",
+  msa: "Malay",
+  tagalog: "Tagalog",
+  filipino: "Tagalog",
+  tgl: "Tagalog",
+  burmese: "Burmese",
+  myanmar: "Burmese",
+  mya: "Burmese",
+  khmer: "Khmer",
+  khm: "Khmer",
+  lao: "Lao",
+  laotian: "Lao",
+  nepali: "Nepali",
+  nep: "Nepali",
+  mongolian: "Mongolian",
+  mon: "Mongolian",
+  swahili: "Swahili",
+  swa: "Swahili",
+  lingala: "Lingala",
+  lin: "Lingala",
+  amharic: "Amharic",
+  amh: "Amharic",
+  somali: "Somali",
+  som: "Somali",
+  albanian: "Albanian",
+  alb: "Albanian",
+  zazaki: "Zazaki",
+  zza: "Zazaki",
+  kurdish: "Kurdish",
+  kurmanji: "Kurmanji",
+  kmr: "Kurmanji",
+  sorani: "Sorani",
+  ckb: "Sorani",
+  greek: "Greek",
+  ell: "Greek",
+  finnish: "Finnish",
+  fin: "Finnish",
+  swedish: "Swedish",
+  swe: "Swedish",
+  norwegian: "Norwegian",
+  nor: "Norwegian",
+  danish: "Danish",
+  dan: "Danish",
+  dutch: "Dutch",
+  nld: "Dutch",
+  romanian: "Romanian",
+  ron: "Romanian",
+  hungarian: "Hungarian",
+  hun: "Hungarian",
+  bulgarian: "Bulgarian",
+  bul: "Bulgarian",
+  croatian: "Croatian",
+  hrv: "Croatian",
+  serbian: "Serbian",
+  srp: "Serbian",
+  czech: "Czech",
+  ces: "Czech",
+  slovak: "Slovak",
+  slk: "Slovak",
+  slovenian: "Slovenian",
+  slv: "Slovenian",
+  latvian: "Latvian",
+  lav: "Latvian",
+  lithuanian: "Lithuanian",
+  lit: "Lithuanian",
+  estonian: "Estonian",
+  est: "Estonian",
+  macedonian: "Macedonian",
+  mkd: "Macedonian",
+  bosnian: "Bosnian",
+  bos: "Bosnian",
+  belarusian: "Belarusian",
+  bel: "Belarusian",
+  catalan: "Catalan",
+  cat: "Catalan",
+};
+
+function expandLangName(name) {
+  const n = String(name || "").trim().toLowerCase();
+  if (LANG_NAME_EXPAND[n]) return LANG_NAME_EXPAND[n];
+  // Fallback — just capitalize first letter
+  return n.charAt(0).toUpperCase() + n.slice(1);
+}
+
 function suggestCountryCode(name) {
   const n = String(name || "").trim().toLowerCase();
   if (!n) return null;
@@ -271,18 +423,30 @@ function suggestLangCode(headerCell) {
   if (LANG_ALIASES[norm]) return LANG_ALIASES[norm];
 
   // Pattern "Country (language)" or "Country (language) + Landing" —
-  // pick language from parentheses AND combine with country for BCP 47 code.
-  const parenMatch = norm.match(/^([^(]+)\(([^)]+)\)/);
+  // produce a HUMAN-READABLE code: "Argentina_Spanish".
+  // Strips "+ Landing" / "+ Lending" / "+ Lending" suffixes first.
+  const stripped_suffix = norm
+    .replace(/\s*\+\s*lan?d[ie]ng\s*$/i, "")
+    .replace(/\s*\n\s*/g, " ")
+    .trim();
+  const parenMatch = stripped_suffix.match(/^([^(]+)\(([^)]+)\)/);
   if (parenMatch) {
     const countryName = parenMatch[1].trim();
     const langName = parenMatch[2].trim().split(/[\s,]/)[0];
     if (LANG_ALIASES[langName]) {
-      const langCode = LANG_ALIASES[langName];
-      // Try to extract country code — handle multi-country prefixes like
-      // "Senegal, Togo, Niger, Mali (french)" → take FIRST country.
+      // Multi-country prefixes ("Senegal, Togo, Niger, Mali") — take FIRST
       const firstCountry = countryName.split(/[,;/]/)[0].trim();
-      const countryCode = suggestCountryCode(firstCountry);
-      return countryCode ? `${langCode}-${countryCode}` : langCode;
+      // Convert to readable code:
+      // - Each word in country gets capitalized: "ivory coast" → "Ivory_Coast"
+      // - Language gets expanded from abbreviations: "eng" → "English"
+      const countrySlug = firstCountry
+        .replace(/[^\p{L}\s]/gu, "")
+        .trim()
+        .split(/\s+/)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join("_");
+      const langSlug = expandLangName(langName);
+      return `${countrySlug}_${langSlug}`;
     }
   }
 
@@ -327,19 +491,38 @@ function suggestLangCode(headerCell) {
 // like languages and what fraction of first-row values look like keys.
 // Returns true only if BOTH signals are strong and the orthogonal
 // signals are weak.
+// Cells matching banner dimensions ("120x240", "300x250", "320х100") are
+// metadata noise that should not count toward key/lang detection ratios.
+const NOISE_RE = /^[`]?\d+\s*[xх]\s*\d+/i;
+function isNoiseCell(v) {
+  return NOISE_RE.test(String(v || "").trim());
+}
+
 function isTransposed(rows) {
   if (!rows || rows.length < 2) return false;
 
-  const firstCol = rows.slice(1).map((r) => r[0]).filter(Boolean);
-  const firstRow = (rows[0] || []).slice(1).filter(Boolean);
+  const firstCol = rows
+    .slice(1)
+    .map((r) => r[0])
+    .filter((v) => v && !isNoiseCell(v));
+  const firstRow = (rows[0] || [])
+    .slice(1)
+    .filter((v) => v && !isNoiseCell(v));
 
   if (firstCol.length < 2 || firstRow.length < 2) return false;
 
   const colAsLangHits = firstCol.filter((v) => suggestLangCode(v)).length;
-  const colAsKeyHits = firstCol.filter((v) => suggestKey(v) && KEY_ALIASES[normalizeName(v)]).length;
+  const colAsKeyHits = firstCol.filter(
+    (v) => suggestKey(v) && KEY_ALIASES[normalizeName(v)]
+  ).length;
 
   const rowAsLangHits = firstRow.filter((v) => suggestLangCode(v)).length;
-  const rowAsKeyHits = firstRow.filter((v) => suggestKey(v) && KEY_ALIASES[normalizeName(v)]).length;
+  const rowAsKeyHits = firstRow.filter(
+    (v) =>
+      KEY_ALIASES[normalizeName(v)] ||
+      /^step\s*\d+$/i.test(String(v).trim()) ||
+      /slide/i.test(String(v).trim())
+  ).length;
 
   const colLangRatio = colAsLangHits / firstCol.length;
   const colKeyRatio = colAsKeyHits / firstCol.length;
@@ -353,6 +536,24 @@ function isTransposed(rows) {
     colLangRatio > rowLangRatio &&
     rowKeyRatio > colKeyRatio
   );
+}
+
+// Returns true if column 0 contains only short codes (1-2 chars) across
+// the data rows — typical for gender markers (Н/Ж, M/F) that don't
+// belong in the translation matrix.
+function maybeStripFirstColumn(rows) {
+  if (!rows || rows.length < 3) return false;
+  let shortCount = 0;
+  let totalCount = 0;
+  // Skip header row, look at data rows
+  for (let i = 1; i < Math.min(rows.length, 30); i++) {
+    const v = String(rows[i][0] || "").trim();
+    if (!v) continue;
+    totalCount++;
+    if (v.length <= 2) shortCount++;
+  }
+  if (totalCount < 3) return false;
+  return shortCount / totalCount >= 0.8;
 }
 
 function transposeRows(rows) {
@@ -374,9 +575,11 @@ function suggestKey(cell) {
   const stepMatch = norm.match(/^(?:step|крок|шаг|stage)\s*\.?\s*(\d+)$/i);
   if (stepMatch) return `step_${stepMatch[1]}`;
 
-  // Numbered slide patterns: "слайд 2", "slide 3"
+  // Numbered slide patterns: "слайд 2", "slide 3", "1st slide", "2nd slide"
   const slideMatch = norm.match(/^(?:slide|слайд)\s*\.?\s*(\d+)$/i);
   if (slideMatch) return `slide_${slideMatch[1]}`;
+  const ordinalSlide = norm.match(/^(\d+)(?:st|nd|rd|th)?\s+slide$/i);
+  if (ordinalSlide) return `slide_${ordinalSlide[1]}`;
 
   // strip trailing/leading punctuation
   const cleaned = norm.replace(/^[^\p{L}]+|[^\p{L}]+$/gu, "");
@@ -801,9 +1004,19 @@ $("#parse-btn").addEventListener("click", async () => {
     const beforeStrip = state.rawRows.length;
     state.rawRows = stripLeadingTitleRows(state.rawRows);
     const droppedRows = beforeStrip - state.rawRows.length;
-    if (droppedRows > 0) {
-      $("#parse-info").textContent =
-        `ℹ Пропущено ${droppedRows} метаданих рядок(ів) зверху перед хедером.`;
+
+    // Smart-drop the first column if it contains only short codes (≤2 chars)
+    // in all data rows — usually a gender/marker column not relevant to data.
+    const droppedFirstCol = maybeStripFirstColumn(state.rawRows);
+    if (droppedFirstCol) {
+      state.rawRows = state.rawRows.map((r) => r.slice(1));
+    }
+
+    const notes = [];
+    if (droppedRows > 0) notes.push(`${droppedRows} метаданих рядок(ів)`);
+    if (droppedFirstCol) notes.push(`перший стовпчик-маркер (Н/Ж/...)`);
+    if (notes.length > 0) {
+      $("#parse-info").textContent = `ℹ Пропущено: ${notes.join(", ")}.`;
     }
 
     // Auto-detect transposed layout: if the FIRST COLUMN looks like
