@@ -775,6 +775,18 @@ async function fetchSheetUrl(url) {
   let trimmed = (url || "").trim();
   if (!trimmed) throw new Error("URL порожній");
 
+  // Auto-convert /pubhtml URL (published HTML view) to /pub?output=csv
+  if (/\/pubhtml/.test(trimmed) && !/output=csv/.test(trimmed)) {
+    trimmed = trimmed.replace(/\/pubhtml(\?.*)?$/, (_, query) => {
+      // preserve gid/single params from original query
+      const params = new URLSearchParams(query ? query.substring(1) : "");
+      params.set("output", "csv");
+      return "/pub?" + params.toString();
+    });
+    $("#parse-info").textContent =
+      "URL /pubhtml перетворено на CSV-експорт.";
+  }
+
   // Auto-convert /edit URLs to /pub-style export. Note: for sheets that are
   // not published, this often still hits CORS — we surface a helpful error.
   if (/\/edit/.test(trimmed) && !/output=csv/.test(trimmed)) {
