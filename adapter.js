@@ -243,6 +243,49 @@ function suggestLangCode(headerCell) {
   return null;
 }
 
+// Determines if the parsed grid is transposed (languages in col 0,
+// keys in row 0). Counts what fraction of first-column values look
+// like languages and what fraction of first-row values look like keys.
+// Returns true only if BOTH signals are strong and the orthogonal
+// signals are weak.
+function isTransposed(rows) {
+  if (!rows || rows.length < 2) return false;
+
+  const firstCol = rows.slice(1).map((r) => r[0]).filter(Boolean);
+  const firstRow = (rows[0] || []).slice(1).filter(Boolean);
+
+  if (firstCol.length < 2 || firstRow.length < 2) return false;
+
+  const colAsLangHits = firstCol.filter((v) => suggestLangCode(v)).length;
+  const colAsKeyHits = firstCol.filter((v) => suggestKey(v) && KEY_ALIASES[normalizeName(v)]).length;
+
+  const rowAsLangHits = firstRow.filter((v) => suggestLangCode(v)).length;
+  const rowAsKeyHits = firstRow.filter((v) => suggestKey(v) && KEY_ALIASES[normalizeName(v)]).length;
+
+  const colLangRatio = colAsLangHits / firstCol.length;
+  const colKeyRatio = colAsKeyHits / firstCol.length;
+  const rowLangRatio = rowAsLangHits / firstRow.length;
+  const rowKeyRatio = rowAsKeyHits / firstRow.length;
+
+  // Transposed = first column is mostly languages AND first row is mostly keys
+  return (
+    colLangRatio >= 0.5 &&
+    rowKeyRatio >= 0.5 &&
+    colLangRatio > rowLangRatio &&
+    rowKeyRatio > colKeyRatio
+  );
+}
+
+function transposeRows(rows) {
+  if (!rows || !rows.length) return rows;
+  const maxCols = Math.max(...rows.map((r) => r.length));
+  const out = [];
+  for (let c = 0; c < maxCols; c++) {
+    out.push(rows.map((r) => (r[c] == null ? "" : r[c])));
+  }
+  return out;
+}
+
 function suggestKey(cell) {
   const norm = normalizeName(cell);
   if (!norm) return null;
@@ -640,6 +683,17 @@ $("#parse-btn").addEventListener("click", async () => {
     if (state.rawRows.length < 2) {
       throw new Error("Замало непорожніх рядків після очищення");
     }
+    // Auto-detect transposed layout: if the FIRST COLUMN looks like
+    // languages and the FIRST ROW (excl col 0) looks like KEYS,
+    // the sheet is mirrored — flip it so the adapter sees the expected
+    // shape (key in col 0, languages in row 0).
+    const transposed = isTransposed(state.rawRows);
+    if (transposed) {
+      state.rawRows = transposeRows(state.rawRows);
+      $("#parse-info").textContent =
+        "🔄 Виявлено транспоновану структуру (мови зліва, ключі зверху) — автоматично виправлено.";
+    }
+
     state.headers = state.rawRows[0];
 
     buildMapping();
