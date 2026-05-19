@@ -298,24 +298,51 @@
 
   <div id="p-install" class="sub">
     <h3>Установка (одноразово)</h3>
+
+    <div class="download-card">
+      <div class="download-card-info">
+        <p class="download-card-tag">Завантаження</p>
+        <h4>Locality для Photoshop</h4>
+        <p class="download-card-desc">Готовий плагін, без додаткових інструментів. Підтримує Photoshop 2024+ (Windows / macOS).</p>
+      </div>
+      <a class="btn btn-primary btn-download" href="https://drive.google.com/file/d/15s-_Jdg5NDDLNY9TLQs-FGhQLpkWeWcQ/view?usp=sharing" target="_blank" rel="noopener">
+        <span class="dl-icon">↓</span>
+        Завантажити плагін
+      </a>
+    </div>
+
     <ol class="steps-list">
       <li>
-        <h4>Заінсталюй UXP Developer Tool</h4>
-        <p>Безкоштовний від Adobe → <a href="https://developer.adobe.com/photoshop/uxp/2022/devtool/" target="_blank" rel="noopener">developer.adobe.com</a></p>
+        <h4>Завантаж файл за кнопкою вище</h4>
+        <p>Google Drive відкриє превʼю — натисни значок <strong>⤓</strong> (Download) у правому верхньому куті. Збережи куди завгодно.</p>
       </li>
       <li>
-        <h4>Запусти UXP DevTool → Add Plugin</h4>
-        <p>Покажи на файл <code>dist/manifest.json</code> з папки плагіна.</p>
+        <h4>Подвійний клік на завантаженому файлі</h4>
+        <p>Якщо файл <code>.ccx</code> — відкриється <strong>Creative Cloud Desktop</strong>, попросить підтвердити установку. Натисни <kbd>Install</kbd>.</p>
+        <p class="step-alt">Якщо файл <code>.zip</code> — розпакуй і скопіюй папку <code>Locality</code> у:</p>
+        <ul class="step-paths">
+          <li><strong>Windows:</strong> <code>%APPDATA%\Adobe\UXP\Plugins\External\</code></li>
+          <li><strong>macOS:</strong> <code>~/Library/Application Support/Adobe/UXP/Plugins/External/</code></li>
+        </ul>
       </li>
       <li>
-        <h4>Натисни <kbd>Load</kbd></h4>
-        <p>Photoshop підхопить плагін за секунду. У меню <strong>Plugins → Locality</strong> зʼявиться панель.</p>
+        <h4>Запусти Photoshop</h4>
+        <p>Якщо PS уже був відкритий — <strong>повністю закрий і відкрий знову</strong>. У меню <strong>Plugins → Locality</strong> зʼявиться панель. Якщо нема — глянь у <strong>Window → Extensions (legacy)</strong>.</p>
       </li>
     </ol>
 
     <div class="callout callout-warn">
       <p class="callout-title">Мінімальна версія Photoshop</p>
-      <p>2024 (25.0.0) або новіша. На старших — плагін не підвантажиться, manifest заблокує запуск.</p>
+      <p>2024 (25.0.0) або новіша. На старших — плагін не підвантажиться, manifest заблокує запуск. Перевір версію: <strong>Help → System Info</strong>.</p>
+    </div>
+
+    <div class="callout callout-info">
+      <p class="callout-title">Не з'явилось у меню?</p>
+      <ul>
+        <li>Переконайся, що PS повністю перезапущений (через таскбар, не Cmd+W / Alt+F4).</li>
+        <li>Перевір, що в папці <code>External/</code> лежить <strong>сама папка</strong> <code>Locality</code> (з <code>manifest.json</code> усередині), а не зіп або вкладена ще раз папка.</li>
+        <li>Windows: розблокуй файл правим кліком → <strong>Properties → Unblock</strong> якщо файл скачаний з браузера.</li>
+      </ul>
     </div>
   </div>
 
