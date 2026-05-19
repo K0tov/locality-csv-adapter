@@ -54,12 +54,24 @@
         </ol>
       </li>
       <li>
+        <a href="#simplifier">Інструмент 3 — Simplifier</a>
+        <ol>
+          <li><a href="#sm-why">Що це і навіщо</a></li>
+          <li><a href="#sm-install">Установка</a></li>
+          <li><a href="#sm-export">Експорт-таб</a></li>
+          <li><a href="#sm-resize">Ресайзи-таб</a></li>
+          <li><a href="#sm-content">Контент-таб</a></li>
+          <li><a href="#sm-combo">Комбо з Locality</a></li>
+        </ol>
+      </li>
+      <li>
         <a href="#scenarios">Сценарії з життя</a>
         <ol>
           <li><a href="#s-basic">Локалізація на 8 мов</a></li>
           <li><a href="#s-match">Заміна команд (Match)</a></li>
           <li><a href="#s-dates">Дата-варіанти</a></li>
           <li><a href="#s-rtl">RTL + автошрифти</a></li>
+          <li><a href="#s-export-batch">150 банерів одним кліком</a></li>
         </ol>
       </li>
       <li><a href="#faq">FAQ і помилки</a></li>
@@ -438,8 +450,324 @@
 </section>
 
 <!-- ────────────────────────────────────────────────────── -->
+<section id="simplifier" class="block">
+  <h2><span class="block-num">3</span>Інструмент: Simplifier</h2>
+
+  <div id="sm-why" class="sub">
+    <h3>Що це і навіщо</h3>
+    <p>Поки Locality локалізує текст у одному PSD, <strong>Simplifier</strong> бере на себе все, що потім — масовий експорт, ресайзи, пакетну заміну контенту в купі файлів. Це окрема панель Photoshop з трьома вкладками:</p>
+
+    <div class="cards-3">
+      <div class="card card-feature">
+        <p class="feature-emoji">📦</p>
+        <h4>Експорт</h4>
+        <p>Один клік — і твій PSD виходить у PNG / JPG / WEBP / GIF одразу для всіх локалізацій або артбордів. JPG-оптимізація з обмеженням за розміром у КБ.</p>
+      </div>
+      <div class="card card-feature">
+        <p class="feature-emoji">📐</p>
+        <h4>Ресайзи</h4>
+        <p>Додаєш PSD-файл (або цілу папку), вказуєш список розмірів через кому — Simplifier генерує всі варіанти у PSD / PNG / JPG / WEBP.</p>
+      </div>
+      <div class="card card-feature">
+        <p class="feature-emoji">🔁</p>
+        <h4>Контент</h4>
+        <p>Правила «знайди шар X — заміни на Y» для тексту і смарт-обʼєктів. Працює з активним документом або з усіма PSD у папці.</p>
+      </div>
+    </div>
+
+    <p>Підтримує Photoshop <strong>23.0+</strong> (на одну версію старіший, ніж Locality — працює навіть на PS 2022).</p>
+  </div>
+
+  <div id="sm-install" class="sub">
+    <h3>Установка (одноразово)</h3>
+
+    <div class="download-card">
+      <div class="download-card-info">
+        <p class="download-card-tag">Завантаження</p>
+        <h4>Simplifier v1.3.0</h4>
+        <p class="download-card-desc">Готовий <code>.ccx</code> — встановлюється через Creative Cloud за один клік. Photoshop 23.0+ (Windows / macOS).</p>
+      </div>
+      <a class="btn btn-primary btn-download" href="https://drive.google.com/file/d/1HL04zlNm8rTJYMVZ423j72UKwilhQD0u/view?usp=sharing" target="_blank" rel="noopener">
+        <span class="dl-icon">↓</span>
+        Завантажити Simplifier
+      </a>
+    </div>
+
+    <ol class="steps-list">
+      <li>
+        <h4>Завантаж файл за кнопкою вище</h4>
+        <p>Drive відкриє превʼю — натисни ⤓ (Download) у правому верхньому куті, збережи <code>Simplifier_v.1.3.0.ccx</code>.</p>
+      </li>
+      <li>
+        <h4>Подвійний клік на <code>.ccx</code></h4>
+        <p>Creative Cloud Desktop запитає підтвердження → <kbd>Install</kbd>. Установка займає 5-10 секунд.</p>
+      </li>
+      <li>
+        <h4>Запусти Photoshop</h4>
+        <p>Меню <strong>Plugins → Simplifier</strong> — там зʼявиться панель. Перетягни її за дефолт в правий док або куди звик.</p>
+      </li>
+    </ol>
+  </div>
+
+  <div id="sm-export" class="sub">
+    <h3>Експорт-таб — пакетний експорт PSD</h3>
+    <p>Працює на основі <strong>уже відкритого PSD</strong> у Photoshop. Експортує його у вказані формати, по локалізаціях або по артбордах.</p>
+
+    <div class="mockup-row">
+      <div class="mockup">
+        <div class="mockup-bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <p class="mockup-url">⚙ Simplifier · Export</p>
+        </div>
+        <div class="mockup-body">
+          <div class="sm-tabs">
+            <span class="sm-tab active">Експорт</span>
+            <span class="sm-tab">Ресайзи</span>
+            <span class="sm-tab">Контент</span>
+          </div>
+          <div class="sm-field">
+            <p class="sm-label">Режим експорту</p>
+            <div class="sm-segmented">
+              <span class="seg active">Звичайний</span>
+              <span class="seg">Артборди</span>
+            </div>
+          </div>
+          <div class="sm-toggle-card">
+            <div class="sm-toggle-head">
+              <span>Локалізації</span>
+              <span class="sm-switch sm-switch-on"></span>
+            </div>
+            <div class="sm-toggle-body">
+              <p class="sm-input-label">Група в PSD</p>
+              <div class="sm-input">Loc</div>
+              <p class="sm-help">Назва групи з локалізаціями: <code>Loc</code></p>
+              <label class="sm-check"><span class="sm-checkbox checked"></span>Зберігати кожну локалізацію в окрему папку</label>
+            </div>
+          </div>
+          <div class="sm-io-row">
+            <div class="sm-io-label">Папка джерело</div>
+            <div class="sm-io-path">D:\Banners\Master\</div>
+          </div>
+          <div class="sm-io-row">
+            <div class="sm-io-label">Папка експорту</div>
+            <div class="sm-io-path">D:\Banners\Out\</div>
+          </div>
+          <div class="sm-field">
+            <p class="sm-label">Формати</p>
+            <div class="sm-checks">
+              <label class="sm-check"><span class="sm-checkbox checked"></span>PNG</label>
+              <label class="sm-check"><span class="sm-checkbox checked"></span>JPG</label>
+              <label class="sm-check"><span class="sm-checkbox"></span>WEBP</label>
+              <label class="sm-check"><span class="sm-checkbox"></span>GIF</label>
+            </div>
+          </div>
+          <button class="m-btn-primary highlight-pulse" style="width: 100%; margin-top: 8px;">Запустити експорт</button>
+        </div>
+      </div>
+
+      <div class="mockup-explain">
+        <ol class="explain-list">
+          <li><strong>Режим «Звичайний»</strong> — експортує весь PSD як одне зображення для кожного формату.</li>
+          <li><strong>Режим «Артборди»</strong> — кожен артборд у документі експортується окремо. Імʼя файлу = імʼя артборда.</li>
+          <li><strong>Локалізації</strong> — якщо в PSD є група <code>Loc</code> (або інша вказана) з підгрупами (<code>EN</code>, <code>RU</code>, <code>AR</code>...), Simplifier рендерить документ N разів — по одному файлу на локалізацію, перемикаючи видимість груп.</li>
+          <li><strong>«Кожну локалізацію в окрему папку»</strong> — генерує структуру <code>Out/EN/banner.png</code>, <code>Out/RU/banner.png</code>... замість <code>banner_EN.png</code>, <code>banner_RU.png</code>.</li>
+          <li><strong>JPG-оптимізація</strong> — постав чекбокс «Оптимізувати JPG» + впиши max KB (наприклад, 350) → плагін підбере якість бінарним пошуком, щоб файл не перевищував ліміт.</li>
+          <li><strong>Префікс імені</strong> — опціонально, додає в початок назви: <code>banner</code> → <code>banner_1920x1080.png</code>.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <p class="callout-title">Структура PSD для локалізованого експорту</p>
+      <pre><code>Document
+└─ Loc                  ← група з ім'ям, вказаним у полі
+   ├─ EN  (visible)     ← кожна підгрупа = окрема локалізація
+   ├─ RU  (hidden)
+   ├─ AR  (hidden)
+   └─ ...
+└─ bg-image
+└─ logo</code></pre>
+      <p>Simplifier перемикатиме видимість підгруп <code>EN/RU/AR/...</code> по черзі і рендеритиме результат у файл. Імена локалізацій беруться з імен підгруп.</p>
+    </div>
+  </div>
+
+  <div id="sm-resize" class="sub">
+    <h3>Ресайзи-таб — пакетний ресайз</h3>
+    <p>Бере PSD-файл або всю папку PSD, генерує копії у вказаних розмірах. Зберігає в потрібному форматі.</p>
+
+    <div class="mockup-row">
+      <div class="mockup">
+        <div class="mockup-bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <p class="mockup-url">⚙ Simplifier · Ресайзи</p>
+        </div>
+        <div class="mockup-body">
+          <div class="sm-tabs">
+            <span class="sm-tab">Експорт</span>
+            <span class="sm-tab active">Ресайзи</span>
+            <span class="sm-tab">Контент</span>
+          </div>
+          <div class="sm-io-row">
+            <div class="sm-io-label">Додати PSD файл</div>
+            <div class="sm-io-path">banner-master.psd</div>
+          </div>
+          <div class="sm-io-row">
+            <div class="sm-io-label">Папка експорту</div>
+            <div class="sm-io-path">D:\Banners\Resized\</div>
+          </div>
+          <div class="sm-task">
+            <span class="sm-task-name">banner-master.psd</span>
+            <div class="sm-input sm-input-inline">320x240, 728x90, 970x250, 1920x1080</div>
+          </div>
+          <div class="sm-field">
+            <p class="sm-label">Формати</p>
+            <div class="sm-checks">
+              <label class="sm-check"><span class="sm-checkbox checked"></span>PSD</label>
+              <label class="sm-check"><span class="sm-checkbox checked"></span>PNG</label>
+              <label class="sm-check"><span class="sm-checkbox"></span>JPG</label>
+              <label class="sm-check"><span class="sm-checkbox"></span>WEBP</label>
+            </div>
+          </div>
+          <button class="m-btn-primary" style="width: 100%; margin-top: 8px;">Запустити ресайз</button>
+        </div>
+      </div>
+
+      <div class="mockup-explain">
+        <ol class="explain-list">
+          <li><strong>Додати PSD файл</strong> — один документ. <strong>Додати папку</strong> — Simplifier пройдеться по всіх PSD у папці і застосує ресайзи до кожного.</li>
+          <li><strong>Список розмірів</strong> — через кому: <code>800x600, 1920x1080, 320x100</code>. На кожен розмір генерується свій файл.</li>
+          <li><strong>PSD-формат</strong> — зберігає копію .psd для подальшого редагування. <strong>PNG/JPG/WEBP</strong> — растери для діплою.</li>
+          <li>Файли іменуються автоматично: <code>banner-master_1920x1080.png</code>, <code>banner-master_800x600.jpg</code>...</li>
+        </ol>
+        <div class="callout callout-warn callout-mini">
+          <p>Ресайз — це <strong>трансформація</strong>, не canvas-crop. Якщо пропорції різні (наприклад, 1920×1080 → 320×100), вміст може спотворитись. Перевір превʼю перш ніж генерувати десятки розмірів.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sm-content" class="sub">
+    <h3>Контент-таб — заміна тексту і смарт-обʼєктів</h3>
+    <p>Найпотужніша частина Simplifier. Описуєш «правила»: «знайди шар з імʼям <em>title</em> — заміни текст на <em>X</em>», «знайди смарт-обʼєкт <em>hero-img</em> — підстав <em>banner-bg-v2.png</em>». Застосовує правила до активного PSD або до всіх PSD у папці.</p>
+
+    <div class="mockup-row">
+      <div class="mockup">
+        <div class="mockup-bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <p class="mockup-url">⚙ Simplifier · Контент</p>
+        </div>
+        <div class="mockup-body">
+          <div class="sm-tabs">
+            <span class="sm-tab">Експорт</span>
+            <span class="sm-tab">Ресайзи</span>
+            <span class="sm-tab active">Контент</span>
+          </div>
+          <div class="sm-field">
+            <p class="sm-label">Режим роботи</p>
+            <div class="sm-segmented">
+              <span class="seg active">Активний документ</span>
+              <span class="seg">Папка з PSD</span>
+            </div>
+          </div>
+          <div class="sm-btn-row">
+            <button class="sm-btn-sec">Аналізатор документу</button>
+            <button class="sm-btn-sec">Очистити правила</button>
+          </div>
+          <div class="sm-toggle-card">
+            <div class="sm-toggle-head">
+              <span>Текстові шари</span>
+              <span class="sm-switch sm-switch-on"></span>
+            </div>
+            <div class="sm-toggle-body">
+              <div class="sm-rule">
+                <span class="sm-rule-label">title</span>
+                <span class="sm-rule-arrow">→</span>
+                <div class="sm-input sm-input-inline">May Heat is here!</div>
+              </div>
+              <div class="sm-rule">
+                <span class="sm-rule-label">cta</span>
+                <span class="sm-rule-arrow">→</span>
+                <div class="sm-input sm-input-inline">Play now</div>
+              </div>
+              <button class="sm-btn-sec sm-btn-add">+ Додати правило</button>
+            </div>
+          </div>
+          <div class="sm-toggle-card">
+            <div class="sm-toggle-head">
+              <span>Смарт-обʼєкти</span>
+              <span class="sm-switch sm-switch-on"></span>
+            </div>
+            <div class="sm-toggle-body">
+              <div class="sm-rule">
+                <span class="sm-rule-label">hero-bg</span>
+                <span class="sm-rule-arrow">→</span>
+                <div class="sm-input sm-input-inline">spring-2026.png</div>
+              </div>
+              <button class="sm-btn-sec sm-btn-add">+ Додати правило</button>
+            </div>
+          </div>
+          <label class="sm-check"><span class="sm-checkbox checked"></span>Зберігати і закривати PSD</label>
+          <button class="m-btn-primary" style="width: 100%; margin-top: 12px;">Запустити заміну</button>
+        </div>
+      </div>
+
+      <div class="mockup-explain">
+        <ol class="explain-list">
+          <li><strong>Аналізатор документу</strong> — натиск кнопки → Simplifier обходить активний PSD і пропонує готові правила для кожного текстового шару й смарт-обʼєкта, які знайде. Економить хвилини на ручному введенні.</li>
+          <li><strong>Текстові правила</strong> — імʼя шару → новий текст. Якщо шар у згорнутій групі, теж знайдеться (рекурсивно).</li>
+          <li><strong>Смарт-обʼєкти</strong> — імʼя шару → шлях до файлу, який треба підставити. Smart-object буде замінено зі збереженням transform.</li>
+          <li><strong>Режим «Папка з PSD»</strong> — застосовує правила до КОЖНОГО PSD у вибраній папці. Корисно для «оновити всі баннери, що зробив минулого тижня».</li>
+          <li><strong>«Зберігати і закривати PSD»</strong> — після застосування зберігає файл (Cmd/Ctrl+S) і закриває. Без галочки — лишає в PS для перегляду.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div id="sm-combo" class="sub">
+    <h3>Комбо з Locality — повний пайплайн</h3>
+    <p>Найпотужніший сценарій. Locality локалізує текст всередині PSD, Simplifier експортує всі мови по папках:</p>
+
+    <div class="qs-diagram">
+      <div class="qs-stage">
+        <div class="stage-icon">📊</div>
+        <p>CSV</p>
+      </div>
+      <div class="qs-arrow">→</div>
+      <div class="qs-stage">
+        <div class="stage-icon">🌐</div>
+        <p>Locality</p>
+      </div>
+      <div class="qs-arrow">→</div>
+      <div class="qs-stage">
+        <div class="stage-icon">🎨</div>
+        <p>PSD з Loc-групою</p>
+      </div>
+      <div class="qs-arrow">→</div>
+      <div class="qs-stage">
+        <div class="stage-icon">📦</div>
+        <p>Simplifier</p>
+      </div>
+      <div class="qs-arrow">→</div>
+      <div class="qs-stage stage-end">
+        <div class="stage-icon">✨</div>
+        <p>N×M файлів</p>
+      </div>
+    </div>
+
+    <ol class="explain-list">
+      <li>У PSD створи групу <code>Loc</code> з підгрупами <code>EN</code>, <code>RU</code>, <code>AR</code>, ... — у кожній продублюй текстові шари з тими ж іменами (<code>title</code>, <code>cta</code>...).</li>
+      <li>У <strong>Locality</strong>: Refresh CSV → для кожної локалізації — Apply (тексти впишуться у відповідну підгрупу).</li>
+      <li>У <strong>Simplifier</strong>, таб Експорт: режим «Звичайний», увімкни «Локалізації», вкажи групу <code>Loc</code>, постав чек «у окремі папки» → Run.</li>
+      <li>На виході: <code>Out/EN/banner.png</code>, <code>Out/RU/banner.png</code>, <code>Out/AR/banner.png</code> — для всіх локалей одним кліком.</li>
+      <li>Якщо потрібно ще й декілька розмірів — переходь у таб Ресайзи Simplifier і там укажи розміри. Усе ×4 формати ×8 мов = десятки файлів за один прогон.</li>
+    </ol>
+  </div>
+
+</section>
+
+<!-- ────────────────────────────────────────────────────── -->
 <section id="scenarios" class="block">
-  <h2><span class="block-num">3</span>Сценарії з життя</h2>
+  <h2><span class="block-num">4</span>Сценарії з життя</h2>
 
   <div id="s-basic" class="sub">
     <h3>Сценарій: локалізація банера на 8 мов</h3>
@@ -535,11 +863,39 @@ cta,Сделать ставку,Сделать ставку,Place a bet,Place a 
     </div>
   </div>
 
+  <div id="s-export-batch" class="sub">
+    <h3>Сценарій: 150 банерів одним кліком (Locality + Simplifier)</h3>
+    <p>Маркетинг просить «давай 5 банерних розмірів × 8 мов × 4 формати = 160 файлів». Без плагінів — день роботи. З нашим стеком — 5 хвилин.</p>
+
+    <div class="scenario-grid">
+      <div class="scenario-flow">
+        <p class="scenario-label">Підготовка (один раз)</p>
+        <ol class="explain-list">
+          <li>У PSD створи групу <code>Loc</code> з підгрупами <code>EN</code>, <code>RU</code>, <code>TR</code>, <code>UK</code>, <code>KK</code>, <code>AR</code>, <code>JA</code>, <code>KO</code>.</li>
+          <li>У кожній підгрупі — продублюй текстові шари з оригінальними іменами (<code>title</code>, <code>subtitle</code>, <code>cta</code>...).</li>
+          <li>Підготуй CSV з перекладами (через адаптер).</li>
+        </ol>
+      </div>
+      <div class="scenario-flow">
+        <p class="scenario-label">Production-цикл</p>
+        <ol class="explain-list">
+          <li><strong>Locality:</strong> для кожної підгрупи <code>EN/RU/TR/...</code> — Apply відповідної мови.</li>
+          <li><strong>Simplifier · Ресайзи:</strong> додай 5 розмірів через кому, формати PNG+JPG+WEBP.</li>
+          <li><strong>Simplifier · Експорт:</strong> увімкни «Локалізації» + «у окремі папки».</li>
+          <li>Запусти. На виході: <code>Out/EN/banner_320x100.png</code>, <code>Out/EN/banner_320x100.jpg</code>, ... × 5 розмірів × 8 мов × 3 формати = 120 файлів.</li>
+        </ol>
+        <div class="callout callout-warn callout-mini">
+          <p>На потужному ноуті 120-200 файлів виходить за 30-60 секунд. PS у цей час буде підвисати — це нормально, не закривай.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </section>
 
 <!-- ────────────────────────────────────────────────────── -->
 <section id="faq" class="block">
-  <h2><span class="block-num">4</span>FAQ і поширені помилки</h2>
+  <h2><span class="block-num">5</span>FAQ і поширені помилки</h2>
 
   <details class="faq">
     <summary>Sheet не вантажиться, помилка «HTTP 401» або «sheet приватний»</summary>
@@ -583,7 +939,32 @@ cta,Сделать ставку,Сделать ставку,Place a bet,Place a 
 
   <details class="faq">
     <summary>Чи можна автоматично експортувати всі мови як окремі файли?</summary>
-    <p>Roadmap, ще не реалізовано. Зараз: Apply → Save As → повторити. У наступних версіях буде кнопка «Export all languages» — згенерує по PSD/PNG для кожної мови за одну транзакцію.</p>
+    <p>Так — для цього є <strong>Simplifier</strong> (Інструмент 3). У Locality робиш Apply для кожної мови у відповідну підгрупу <code>Loc/EN/</code>, <code>Loc/RU/</code>, ... — потім у Simplifier вмикаєш «Локалізації» + «у окремі папки» і отримуєш одним кліком всі файли.</p>
+  </details>
+
+  <details class="faq">
+    <summary><strong>Simplifier:</strong> експорт вилетів — JPG надто великий</summary>
+    <p>Постав чек «Оптимізувати JPG» + впиши max KB (наприклад, 350). Simplifier зробить бінарний пошук якості — підбере найвищу, де файл влізає у ліміт. Якщо ліміт надто жорсткий — спробуй збільшити (наприклад, 500 КБ для великих банерів).</p>
+  </details>
+
+  <details class="faq">
+    <summary><strong>Simplifier:</strong> чим відрізняються «Звичайний» і «Артборди»?</summary>
+    <p><strong>Звичайний</strong> — увесь PSD = одне зображення на формат. Підходить коли в документі одна композиція. <strong>Артборди</strong> — кожен артборд експортується окремим файлом, ім'я файлу береться з імені артборда. Підходить коли в одному документі лежать 5-10 банер-розмірів як артборди.</p>
+  </details>
+
+  <details class="faq">
+    <summary><strong>Simplifier:</strong> «Аналізатор документу» не знаходить деякі шари</summary>
+    <p>Перевір, що шари НЕ заблоковані (lock icon у панелі Layers) і НЕ приховані. Аналізатор працює тільки з видимими, активними шарами. Якщо шар у згорнутій групі — це ок, його знайде. Якщо шар «всередині» смарт-обʼєкта — нема, треба зайти у смарт окремо.</p>
+  </details>
+
+  <details class="faq">
+    <summary><strong>Simplifier:</strong> ресайз зіпсував пропорції</summary>
+    <p>Ресайз — це не canvas-crop, а transform. Якщо вихідний PSD 1920×1080 і ти кажеш 320×100 — зображення стиснеться вертикально, бо пропорції різні. Спочатку зроби в PSD кілька версій з правильними пропорціями (через артборди), потім ресайзь кожну окремо в межах її пропорції.</p>
+  </details>
+
+  <details class="faq">
+    <summary><strong>Simplifier:</strong> заміна тексту в папці пропустила частину файлів</summary>
+    <p>Перевір лог — там покаже, які PSD пропущені і чому. Найчастіше: 1) шар з потрібним іменем не знайдено (помилка набору); 2) PSD замкнений на запис у файловій системі; 3) формат файлу не .psd (.psb треба відкривати окремо). Перейменуй шари до однакового стандарту через Аналізатор.</p>
   </details>
 
 </section>

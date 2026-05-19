@@ -773,6 +773,261 @@ p { margin: 0 0 12px; }
   color: #ddd !important;
 }
 
+/* === Simplifier plugin mockup ================================ */
+.sm-tabs {
+  display: flex;
+  gap: 0;
+  background: #0c0c0c;
+  border-radius: 8px;
+  padding: 3px;
+  margin-bottom: 16px;
+  border: 1px solid #232323;
+}
+.sm-tab {
+  flex: 1;
+  text-align: center;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: #888;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sm-tab.active {
+  background: linear-gradient(135deg, #232323, #1c1c1c);
+  color: #fff;
+  box-shadow: 0 1px 0 #2e2e2e inset;
+}
+.sm-field { margin-bottom: 14px; }
+.sm-label {
+  margin: 0 0 6px;
+  font-size: 11px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+.sm-input-label {
+  margin: 0 0 4px;
+  font-size: 11px;
+  color: #888;
+}
+.sm-input {
+  background: #0d0d0d;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #ffaa66;
+  margin-bottom: 6px;
+}
+.sm-input-inline {
+  flex: 1;
+  margin: 0;
+  padding: 5px 8px;
+  font-size: 11px;
+}
+.sm-help {
+  margin: 0;
+  font-size: 11px;
+  color: #777;
+}
+.sm-segmented {
+  display: flex;
+  gap: 0;
+  background: #0c0c0c;
+  border: 1px solid #232323;
+  border-radius: 6px;
+  padding: 2px;
+}
+.sm-segmented .seg {
+  flex: 1;
+  text-align: center;
+  padding: 6px 10px;
+  font-size: 11px;
+  color: #999;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.sm-segmented .seg.active {
+  background: #232323;
+  color: #fff;
+}
+.sm-toggle-card {
+  background: #121212;
+  border: 1px solid #1f1f1f;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.sm-toggle-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #ddd;
+  font-weight: 500;
+}
+.sm-toggle-body {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #1f1f1f;
+}
+.sm-switch {
+  width: 32px;
+  height: 18px;
+  background: #2a2a2a;
+  border-radius: 999px;
+  position: relative;
+  display: inline-block;
+  transition: background 0.2s;
+}
+.sm-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: #888;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+.sm-switch-on { background: linear-gradient(135deg, #ff8b4d, #ff5e3a); }
+.sm-switch-on::after { left: 16px; background: #fff; }
+
+.sm-io-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #0d0d0d;
+  border: 1px solid #232323;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  gap: 14px;
+}
+.sm-io-label {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+.sm-io-path {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #c0c0c0;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sm-checks {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.sm-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #c0c0c0;
+  cursor: pointer;
+}
+.sm-checkbox {
+  width: 14px;
+  height: 14px;
+  border: 1px solid #444;
+  border-radius: 3px;
+  display: inline-block;
+  flex-shrink: 0;
+  background: #0d0d0d;
+}
+.sm-checkbox.checked {
+  background: linear-gradient(135deg, #ff8b4d, #ff5e3a);
+  border-color: #ff8b4d;
+  position: relative;
+}
+.sm-checkbox.checked::after {
+  content: "✓";
+  position: absolute;
+  top: -2px;
+  left: 2px;
+  font-size: 11px;
+  color: #1a0d05;
+  font-weight: 700;
+}
+
+.sm-btn-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.sm-btn-sec {
+  padding: 6px 12px;
+  background: #232323;
+  border: 1px solid #333;
+  border-radius: 5px;
+  color: #d4d4d4;
+  font-size: 11px;
+  cursor: pointer;
+  flex: 1;
+  font-family: inherit;
+}
+.sm-btn-sec:hover { background: #2a2a2a; }
+.sm-btn-add {
+  margin-top: 8px;
+  flex: 0;
+  align-self: flex-start;
+}
+
+.sm-rule {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px dashed #1f1f1f;
+}
+.sm-rule:last-of-type { border-bottom: 0; }
+.sm-rule-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #ffaa66;
+  background: #1c1c1c;
+  border: 1px solid #2a2a2a;
+  padding: 3px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  min-width: 64px;
+  text-align: center;
+}
+.sm-rule-arrow {
+  color: #555;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.sm-task {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #121212;
+  border: 1px solid #1f1f1f;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+.sm-task-name {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #ddd;
+  flex-shrink: 0;
+}
+
 /* === PS plugin mockup ======================================== */
 .ps-mockup {
   background: #1c1c1c;
