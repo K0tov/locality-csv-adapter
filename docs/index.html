@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Як працювати з Locality + Адаптером — Документація</title>
+<meta name="description" content="Покрокова інструкція для дизайнерів і маркетологів: підготувати таблицю перекладів, прогнати через адаптер, локалізувати банер у Photoshop за два кліки." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="../">
+    <span class="brand-mark">BK</span>
+    <span class="brand-name">BannerKit Docs</span>
+  </a>
+  <nav class="site-nav">
+    <a href="../">Адаптер</a>
+    <a href="#quickstart">Старт</a>
+    <a href="#adapter">Адаптер-гайд</a>
+    <a href="#plugin">Плагін-гайд</a>
+    <a href="#scenarios">Сценарії</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+</header>
+
+<main class="layout">
+
+<aside class="toc">
+  <div class="toc-inner">
+    <p class="toc-title">Зміст</p>
+    <ol class="toc-list">
+      <li><a href="#quickstart">Швидкий старт за 5 кроків</a></li>
+      <li>
+        <a href="#adapter">Інструмент 1 — Адаптер</a>
+        <ol>
+          <li><a href="#a-why">Що це і навіщо</a></li>
+          <li><a href="#a-input">Як завантажити дані</a></li>
+          <li><a href="#a-parse">Що робить «Розібрати»</a></li>
+          <li><a href="#a-map">Маппінг локалей і ключів</a></li>
+          <li><a href="#a-export">Експорт CSV</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#plugin">Інструмент 2 — Locality плагін</a>
+        <ol>
+          <li><a href="#p-install">Установка</a></li>
+          <li><a href="#p-psd">Підготовка PSD</a></li>
+          <li><a href="#p-load">Завантажити переклади</a></li>
+          <li><a href="#p-apply">Apply</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#scenarios">Сценарії з життя</a>
+        <ol>
+          <li><a href="#s-basic">Локалізація на 8 мов</a></li>
+          <li><a href="#s-match">Заміна команд (Match)</a></li>
+          <li><a href="#s-dates">Дата-варіанти</a></li>
+          <li><a href="#s-rtl">RTL + автошрифти</a></li>
+        </ol>
+      </li>
+      <li><a href="#faq">FAQ і помилки</a></li>
+    </ol>
+  </div>
+</aside>
+
+<article class="content">
+
+<section class="hero">
+  <p class="eyebrow">Документація</p>
+  <h1>Як локалізувати банер<br />за <em>5&nbsp;кліків</em></h1>
+  <p class="lede">
+    Покрокова інструкція для дизайнерів і маркетологів. Готуєш таблицю перекладів — прогоняєш через адаптер — натискаєш <kbd>Apply</kbd> у Photoshop. Жодних копі-пастів, жодного ручного підбору розміру тексту.
+  </p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#quickstart">Перейти до швидкого старту</a>
+    <a class="btn btn-ghost" href="../">Відкрити адаптер</a>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────── -->
+<section id="quickstart" class="block">
+  <h2><span class="block-num">0</span>Швидкий старт</h2>
+  <p class="block-lede">Якщо все під рукою — 5 хвилин від «маю таблицю» до «маю готову локалізацію в PSD».</p>
+
+  <ol class="qs-steps">
+    <li>
+      <p class="qs-num">1</p>
+      <h3>Підготуй таблицю</h3>
+      <p>Google Sheets / Excel / CSV. Перший стовпчик — ключі (<code>title</code>, <code>cta</code>...), решта — мови (<code>ru</code>, <code>en</code>, <code>ar</code>...). Якщо таблиця хаотична — не страшно, адаптер впорається.</p>
+    </li>
+    <li>
+      <p class="qs-num">2</p>
+      <h3>Прогоняй через адаптер</h3>
+      <p>Відкривай <a href="../">locality-csv.richasez666.workers.dev</a>, вставляй URL таблиці або файл — натискай <kbd>Розібрати</kbd>.</p>
+    </li>
+    <li>
+      <p class="qs-num">3</p>
+      <h3>Завантаж готовий CSV</h3>
+      <p>Адаптер віддасть чистий файл у форматі плагіна. Просто скачай його.</p>
+    </li>
+    <li>
+      <p class="qs-num">4</p>
+      <h3>Відкрий PSD у Photoshop</h3>
+      <p>Майстер-документ з шарами, іменованими як ключі (<code>title</code>, <code>cta</code>...). Плагін Locality має бути встановлений (див. <a href="#p-install">розділ нижче</a>).</p>
+    </li>
+    <li>
+      <p class="qs-num">5</p>
+      <h3>Apply → готово</h3>
+      <p>У панелі Locality обери CSV-файл і мову → <kbd>Apply</kbd>. Текст підставиться, кегль автоматично підлаштується якщо переклад довший за оригінал.</p>
+    </li>
+  </ol>
+
+  <div class="qs-diagram">
+    <div class="qs-stage">
+      <div class="stage-icon">📊</div>
+      <p>Таблиця</p>
+    </div>
+    <div class="qs-arrow">→</div>
+    <div class="qs-stage">
+      <div class="stage-icon">🔧</div>
+      <p>Адаптер</p>
+    </div>
+    <div class="qs-arrow">→</div>
+    <div class="qs-stage">
+      <div class="stage-icon">📄</div>
+      <p>Чистий CSV</p>
+    </div>
+    <div class="qs-arrow">→</div>
+    <div class="qs-stage">
+      <div class="stage-icon">🎨</div>
+      <p>Photoshop</p>
+    </div>
+    <div class="qs-arrow">→</div>
+    <div class="qs-stage stage-end">
+      <div class="stage-icon">✨</div>
+      <p>Локалізації</p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────── -->
+<section id="adapter" class="block">
+  <h2><span class="block-num">1</span>Інструмент: CSV Адаптер</h2>
+
+  <div id="a-why" class="sub">
+    <h3>Що це і навіщо</h3>
+    <p>Плагін Locality читає <strong>один формат</strong>: перший стовпчик <code>key</code>, решта — ISO-коди мов. Реальні маркетингові таблиці виглядають інакше: повні назви країн, гендерні маркери, банер-розміри в окремих колонках, транспоновані шити, абревіатури мов.</p>
+    <p>Адаптер бере цей хаос на вхід — і віддає чистий CSV у форматі плагіна. Розпізнає:</p>
+    <ul class="feature-list">
+      <li>Повні назви мов: <code>Russian</code>, <code>русский</code>, <code>українська</code>, <code>arabic</code>, <code>bengali</code> — і ще 80+ варіантів</li>
+      <li>Описові коди: <code>Argentina (spanish) + Landing</code> → <code>Argentina_Spanish</code></li>
+      <li>Транспоновані таблиці (мови в рядках, ключі в колонках)</li>
+      <li>Метадані: рядки «оновлені коди», стовпчики Н/Ж, банер-розміри (<code>120x240</code>, <code>320х100 моб</code>...)</li>
+      <li>Match/Variant-патерни для заміни команд або варіантів креативу</li>
+      <li>Багаторядкові клітинки, нестандартні апострофи, кириличне «х» у розмірах</li>
+    </ul>
+  </div>
+
+  <div id="a-input" class="sub">
+    <h3>Як завантажити дані — 3 способи</h3>
+    <div class="cards-3">
+      <div class="card">
+        <p class="card-tag">Спосіб A</p>
+        <h4>Вставити з буфера</h4>
+        <p>Вкладка <strong>Вставити CSV</strong>. Скопіюй з Google Sheets чи Excel — і встав сюди прямо текст із табуляціями або комами.</p>
+        <p class="card-when">Підійде коли: маленька таблиця, нема публічного шиту.</p>
+      </div>
+      <div class="card">
+        <p class="card-tag">Спосіб B</p>
+        <h4>URL Google Sheets</h4>
+        <p>Вкладка <strong>URL</strong>. Зроби шит публічним (Share → Anyone with link) — вставляй будь-який лінк: <code>/edit</code>, <code>/pub</code>, <code>/pubhtml</code>. Адаптер сам конвертує у CSV-export.</p>
+        <p class="card-when">Підійде коли: таблицю редагує команда, треба завжди останню версію.</p>
+      </div>
+      <div class="card">
+        <p class="card-tag">Спосіб C</p>
+        <h4>Файл</h4>
+        <p>Вкладка <strong>Файл</strong>. Дропни <code>.csv</code>, <code>.xlsx</code>, <code>.tsv</code>, <code>.docx</code>, <code>.pdf</code>. Якщо в xlsx кілька аркушів — обери потрібний у пікері.</p>
+        <p class="card-when">Підійде коли: таблиця у файлі, нема онлайн-версії.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="a-parse" class="sub">
+    <h3>Що робить «Розібрати»</h3>
+    <p>Натиснення кнопки запускає послідовність розумних чисток:</p>
+
+    <div class="mockup-row">
+      <div class="mockup">
+        <div class="mockup-bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <p class="mockup-url">locality-csv.richasez666.workers.dev</p>
+        </div>
+        <div class="mockup-body">
+          <div class="m-tabs">
+            <span class="m-tab">Вставити</span>
+            <span class="m-tab active">URL</span>
+            <span class="m-tab">Файл</span>
+          </div>
+          <div class="m-field">
+            <label>Посилання на Google Sheet</label>
+            <div class="m-input">https://docs.google.com/spreadsheets/d/1oU9fjHzJ...</div>
+          </div>
+          <div class="m-actions">
+            <button class="m-btn-primary highlight-pulse">Розібрати →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mockup-explain">
+        <ol class="explain-list">
+          <li><strong>Викидає шум</strong> — колонки з banner-розмірами (<code>120x240</code>, <code>320х100</code>) автоматично відсіюються.</li>
+          <li><strong>Знаходить шапку</strong> — пропускає «метадані» зверху (рядки типу «оновлені коди» чи декоративні написи), знаходить рядок із ключами.</li>
+          <li><strong>Чистить ліву колонку</strong> — Н/Ж, M/F та інші 1-2-літерні маркери відсікаються.</li>
+          <li><strong>Транспонує</strong> — якщо мови в рядках, а ключі у колонках, перевертає таблицю автоматично.</li>
+          <li><strong>Маппить локалі та ключі</strong> — конвертує описові імена у ISO-коди або в зручні слаги.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div id="a-map" class="sub">
+    <h3>Маппінг локалей і ключів</h3>
+    <p>Після «Розібрати» з'являється картка «Маппінг». Дві таблиці:</p>
+
+    <div class="mockup mockup-wide">
+      <div class="mockup-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <p class="mockup-url">Крок 2 — Маппінг</p>
+      </div>
+      <div class="mockup-body">
+        <div class="m-stats">
+          <span><strong>21</strong> мов</span>
+          <span><strong>3</strong> ключі</span>
+          <span class="m-stat-warn"><strong>2</strong> пропущено</span>
+        </div>
+
+        <table class="m-table">
+          <thead>
+            <tr><th>Оригінал</th><th>→</th><th>ISO код</th><th>Статус</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Argentina (spanish) + Landing</td><td>→</td><td><input value="Argentina_Spanish" /></td><td><span class="badge ok">ok</span></td><td><span class="link">пропустити</span></td></tr>
+            <tr><td>Egypt (arabic) + Landing</td><td>→</td><td><input value="Egypt_Arabic" /></td><td><span class="badge ok">ok</span><span class="badge rtl">RTL</span></td><td><span class="link">пропустити</span></td></tr>
+            <tr class="m-skipped"><td>зовнішність</td><td>→</td><td><input value="" placeholder="напр. en" /></td><td><span class="badge skip">пропустити</span></td><td><span class="link">включити</span></td></tr>
+            <tr><td>Kenya (english) + Landing</td><td>→</td><td><input value="en-KE" /></td><td><span class="badge ok">ok</span></td><td><span class="link">пропустити</span></td></tr>
+          </tbody>
+        </table>
+
+        <p class="m-divider"></p>
+
+        <table class="m-table">
+          <thead>
+            <tr><th>Оригінал рядка</th><th>→</th><th>Ключ для PSD</th><th>Статус</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1st Slide</td><td>→</td><td><input value="slide_1" /></td><td><span class="badge ok">ok</span></td><td><span class="link">пропустити</span></td></tr>
+            <tr><td>2nd Slide</td><td>→</td><td><input value="slide_2" /></td><td><span class="badge ok">ok</span></td><td><span class="link">пропустити</span></td></tr>
+            <tr><td>Button</td><td>→</td><td><input value="cta" /></td><td><span class="badge ok">ok</span></td><td><span class="link">пропустити</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <p class="callout-title">Як редагувати</p>
+      <ul>
+        <li><strong>Зміни код / ключ</strong> — клік у поле <code>input</code>, набирай нове значення. Превʼю CSV оновлюється миттєво.</li>
+        <li><strong>«пропустити»</strong> — клацай по правому посиланню. Рядок підсвітиться, не потрапить у експорт.</li>
+        <li><strong>«включити»</strong> — для рядка, який адаптер сам відсіяв (зазвичай через незрозумілу назву). Впиши код вручну.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="a-export" class="sub">
+    <h3>Експорт чистого CSV</h3>
+    <p>Картка «Превʼю» унизу показує фінальний файл. Дві дії:</p>
+    <div class="cards-2">
+      <div class="card">
+        <h4>📋 Скопіювати в буфер</h4>
+        <p>Натиск кнопки <kbd>Скопіювати</kbd> — увесь CSV у буфері. Корисно для пасту в плагін, що приймає текст.</p>
+      </div>
+      <div class="card">
+        <h4>💾 Завантажити файл</h4>
+        <p>Кнопка <kbd>Завантажити CSV</kbd> — згенерує <code>locality.csv</code> з UTF-8 BOM (працює в Excel без іспанських питань про кодування).</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ────────────────────────────────────────────────────── -->
+<section id="plugin" class="block">
+  <h2><span class="block-num">2</span>Інструмент: Locality плагін</h2>
+
+  <div id="p-install" class="sub">
+    <h3>Установка (одноразово)</h3>
+    <ol class="steps-list">
+      <li>
+        <h4>Заінсталюй UXP Developer Tool</h4>
+        <p>Безкоштовний від Adobe → <a href="https://developer.adobe.com/photoshop/uxp/2022/devtool/" target="_blank" rel="noopener">developer.adobe.com</a></p>
+      </li>
+      <li>
+        <h4>Запусти UXP DevTool → Add Plugin</h4>
+        <p>Покажи на файл <code>dist/manifest.json</code> з папки плагіна.</p>
+      </li>
+      <li>
+        <h4>Натисни <kbd>Load</kbd></h4>
+        <p>Photoshop підхопить плагін за секунду. У меню <strong>Plugins → Locality</strong> зʼявиться панель.</p>
+      </li>
+    </ol>
+
+    <div class="callout callout-warn">
+      <p class="callout-title">Мінімальна версія Photoshop</p>
+      <p>2024 (25.0.0) або новіша. На старших — плагін не підвантажиться, manifest заблокує запуск.</p>
+    </div>
+  </div>
+
+  <div id="p-psd" class="sub">
+    <h3>Підготовка PSD</h3>
+    <p>Правило одне: <strong>імʼя текстового шару === ключ у CSV</strong>. Без пробілів зайвих.</p>
+
+    <div class="mockup-row">
+      <div class="psd-mockup">
+        <p class="psd-title">Layers</p>
+        <ul class="psd-layers">
+          <li><span class="psd-icon">📁</span><strong>banner-master</strong></li>
+          <li class="psd-nested"><span class="psd-icon">T</span>title</li>
+          <li class="psd-nested"><span class="psd-icon">T</span>subtitle</li>
+          <li class="psd-nested"><span class="psd-icon">T</span>cta</li>
+          <li class="psd-nested"><span class="psd-icon">T</span>bonus</li>
+          <li class="psd-nested"><span class="psd-icon">🖼️</span>bg-image</li>
+        </ul>
+      </div>
+
+      <div class="psd-explain">
+        <p><strong>title</strong> ← у CSV ключ <code>title</code></p>
+        <p><strong>cta</strong> ← у CSV ключ <code>cta</code></p>
+        <p>Шарів без перекладу торкатися не будуть — лог покаже warning, але ні шарів не зламає.</p>
+        <hr />
+        <p class="psd-tip"><strong>Поширена помилка</strong>: шар названо <code>title&nbsp;</code> (з пробілом у кінці). У логу буде <code>"title " has no translation</code>. Перейменуй у Photoshop, прибравши хвостовий пробіл.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="p-load" class="sub">
+    <h3>Завантажити переклади</h3>
+
+    <div class="mockup-row">
+      <div class="ps-mockup">
+        <p class="ps-title">⚙ Locality</p>
+        <div class="ps-section">
+          <p class="ps-label">URL таблиці</p>
+          <div class="ps-input">locality-csv...workers.dev/loc.csv</div>
+          <button class="ps-btn ps-btn-secondary highlight-pulse">↻ Refresh</button>
+        </div>
+        <div class="ps-section">
+          <p class="ps-label">Мова</p>
+          <select class="ps-select">
+            <option>uk — Українська</option>
+            <option>en — English</option>
+            <option>ar — Арабська (RTL)</option>
+            <option>ko — Корейська</option>
+          </select>
+        </div>
+        <div class="ps-actions">
+          <button class="ps-btn ps-btn-primary">Apply</button>
+        </div>
+        <div class="ps-log">
+          <p class="ps-log-line ok">✓ Loaded 5 keys, 8 languages</p>
+        </div>
+      </div>
+
+      <div class="psd-explain">
+        <p><strong>Поле URL</strong> — постав сюди лінк на твій CSV. Адаптер віддає файл — заливай його куди завгодно (GitHub Pages, Cloudflare Pages, чи опублікований Google Sheets).</p>
+        <p><strong>↻ Refresh</strong> — підтягне останню версію. Cache-busting вмонтовано — плагін завжди бачить актуальний контент.</p>
+        <p><strong>Мова</strong> — дропдаун заповнюється з колонок CSV після Refresh.</p>
+        <hr />
+        <p class="psd-tip">URL та обрану мову плагін памʼятає між сесіями (зберігає в localStorage).</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="p-apply" class="sub">
+    <h3>Apply — що насправді відбувається</h3>
+    <ol class="explain-list">
+      <li><strong>Обхід шарів</strong> — плагін рекурсивно знаходить усі текстові шари (включно з вкладеними у згорнуті групи).</li>
+      <li><strong>Збіг імʼя ← ключ</strong> — для кожного шару шукає рядок у CSV, де <code>key</code> дорівнює імені.</li>
+      <li><strong>Підстановка тексту</strong> — заміняє <code>contents</code> на значення обраної мови.</li>
+      <li><strong>Autofit</strong> — якщо переклад ширший за оригінал, бінарно зменшує кегль (до 60% від базового). Якщо не вистачає — попередить у логу.</li>
+      <li><strong>Шрифти</strong> — для RTL/CJK-мов автоматично підтягує Noto Sans (Arabic/Hebrew/Devanagari/CJK...) якщо вказана колонка <code>font_family</code> порожня.</li>
+      <li><strong>Замкнені шари</strong> — тимчасово анлокаються на час редагування, потім локаються назад.</li>
+      <li><strong>Один Undo</strong> — вся локалізація — це одна транзакція. <kbd>Ctrl+Z</kbd> повертає до оригіналу одним кроком.</li>
+    </ol>
+
+    <div class="callout callout-info">
+      <p class="callout-title">Лог унизу панелі</p>
+      <p>Показує що зробилось і що ні. Рівні:</p>
+      <ul class="log-legend">
+        <li><span class="dot dot-ok"></span><strong>ok</strong> — шар оновлено</li>
+        <li><span class="dot dot-warn"></span><strong>warn</strong> — шрифт не встановлено / autofit на 60% / шар без перекладу</li>
+        <li><span class="dot dot-skip"></span><strong>skip</strong> — ключ є в CSV, але шару з таким імʼям нема в PSD</li>
+        <li><span class="dot dot-err"></span><strong>error</strong> — URL невалідний / нема активного документа</li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<!-- ────────────────────────────────────────────────────── -->
+<section id="scenarios" class="block">
+  <h2><span class="block-num">3</span>Сценарії з життя</h2>
+
+  <div id="s-basic" class="sub">
+    <h3>Сценарій: локалізація банера на 8 мов</h3>
+    <p>Базовий кейс. Маркетинг прислав Google Sheet з 5 ключами і 8 мовами. Ти готуєш PSD-мастер, рендериш 8 версій.</p>
+
+    <div class="scenario-grid">
+      <div class="scenario-csv">
+        <p class="scenario-label">CSV</p>
+        <pre><code>key,ru,en,tr,uk,kk,ar,ja,ko
+title,Майская жара,May Heat,MAYIS SICAĞI,Травнева спека,Мамыр ыстығы,حرارة مايو,メイヒート,5월 더위
+subtitle,Горячий май,Red-hot May,ATEŞLİ MAYIS,Гарячий травень,Ыстық мамыр,مايو الحار,激アツの5月,뜨거운 5월
+cta,Играть,Play,OYNA,Грати,Ойна,العب,プレイ,플레이
+bonus,БОНУС,BONUS,BONUS,БОНУС,БОНУС,مكافأة,ボーナス,보너스
+period,Май 2026,May 2026,Mayıs 2026,Травень 2026,Мамыр 2026,مايو 2026,2026年5月,2026년 5월</code></pre>
+      </div>
+
+      <div class="scenario-flow">
+        <p class="scenario-label">Що робиш</p>
+        <ol class="explain-list">
+          <li>PSD-мастер: 5 текстових шарів (<code>title</code>, <code>subtitle</code>, <code>cta</code>, <code>bonus</code>, <code>period</code>) + графіка.</li>
+          <li>Прогоняєш через адаптер → завантажуєш <code>loc.csv</code> на Cloudflare Pages (або куди завгодно з публічним URL).</li>
+          <li>У Photoshop відкриваєш мастер. У плагіні встановлюєш URL → Refresh.</li>
+          <li>Дропдаун: вибираєш <code>en</code> → Apply → Save As <code>banner-en.psd</code>.</li>
+          <li>Повторюєш: <code>tr</code> → Apply → Save As <code>banner-tr.psd</code>.</li>
+          <li>...×8</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div id="s-match" class="sub">
+    <h3>Сценарій: заміна команд матчу</h3>
+    <p>Креатив один, контент змінюється кожен тиждень — пари команд, дати, коефіцієнти. Замість 30 файлів — 1 мастер + CSV.</p>
+
+    <div class="scenario-grid">
+      <div class="scenario-csv">
+        <p class="scenario-label">CSV (variants як «локалі»)</p>
+        <pre><code>key,match_1,match_2,match_3,match_4
+team_1,Real Madrid,Manchester City,Bayern,PSG
+team_2,Barcelona,Liverpool,Dortmund,Marseille
+date,12.05,14.05,16.05,18.05
+odds,1.85,2.10,1.65,2.35
+cta,Поставити,Поставити,Поставити,Поставити</code></pre>
+      </div>
+
+      <div class="scenario-flow">
+        <p class="scenario-label">Як це працює</p>
+        <ol class="explain-list">
+          <li>PSD: шари <code>team_1</code>, <code>team_2</code>, <code>date</code>, <code>odds</code>, <code>cta</code>.</li>
+          <li>Адаптер впізнає <code>Match 1</code>, <code>Match 2</code> як варіанти. Можеш і так писати, і так — <code>v1</code>, <code>variant 2</code>...</li>
+          <li>У плагіні дропдаун покаже <code>match_1</code>, <code>match_2</code>... — Apply для кожного.</li>
+        </ol>
+        <div class="callout callout-warn callout-mini">
+          <p>Не забудь зняти випадковий пробіл у імені шару — <code>team_1&nbsp;</code> (з пробілом) і <code>team_1</code> для плагіна — це різні шари.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="s-dates" class="sub">
+    <h3>Сценарій: дата-варіанти однієї мови</h3>
+    <p>Той самий креатив крутиться кілька днів — змінюється тільки дата. Робиш дві колонки <code>RU</code> і <code>RU_2</code> з однаковим текстом і різними датами.</p>
+
+    <div class="scenario-csv">
+      <pre><code>key,ru,RU_2,en,EN_2
+slide_1,30/05,31/05,30/05,31/05
+slide_2,Ставка без риска до $100,Ставка без риска до $100,Risk-free bet up to $100,Risk-free bet up to $100
+cta,Сделать ставку,Сделать ставку,Place a bet,Place a bet</code></pre>
+    </div>
+    <p class="scenario-tip">Плагін зберігає регістр для кодів з підкресленням і великою літерою — папки будуть <code>RU_2</code>, <code>EN_2</code>, не <code>ru_2</code>.</p>
+  </div>
+
+  <div id="s-rtl" class="sub">
+    <h3>Сценарій: RTL + автошрифти</h3>
+    <p>Креатив для CIS + GCC (арабський ринок) + азіатки. Не треба руками перемикати напрям тексту чи шукати шрифт — плагін сам.</p>
+
+    <div class="cards-3">
+      <div class="card card-feature">
+        <p class="feature-emoji">🔄</p>
+        <h4>RTL автоматично</h4>
+        <p>Для <code>ar</code>, <code>he</code>, <code>fa</code>, <code>ur</code>, <code>ckb</code>, <code>ps</code>, <code>sd</code>, <code>yi</code> — направлення тексту перемикається автоматично.</p>
+      </div>
+      <div class="card card-feature">
+        <p class="feature-emoji">🔤</p>
+        <h4>Шрифт сам підставиться</h4>
+        <p>Якщо мастер-шрифт не покриває скрипт, плагін підставить Noto Sans (Arabic / Hebrew / Devanagari / Bengali / Tamil / Thai / Myanmar / Khmer / Lao / Georgian / Armenian / Ethiopic / KR / JP / SC).</p>
+      </div>
+      <div class="card card-feature">
+        <p class="feature-emoji">⚙</p>
+        <h4>Або вказуєш свій</h4>
+        <p>Колонка <code>font_family</code> у CSV перекриває автодетект. Постав туди PostScript-імʼя — для конкретної мови застосується саме воно.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ────────────────────────────────────────────────────── -->
+<section id="faq" class="block">
+  <h2><span class="block-num">4</span>FAQ і поширені помилки</h2>
+
+  <details class="faq">
+    <summary>Sheet не вантажиться, помилка «HTTP 401» або «sheet приватний»</summary>
+    <p>Зроби таблицю публічною: Share → «Anyone with the link» (Viewer). Якщо потрібен жорсткий контроль доступу — File → Share → Publish to web → CSV. Опублікований URL прийме адаптер.</p>
+  </details>
+
+  <details class="faq">
+    <summary>Адаптер транспонував таблицю, а в мене вона мала залишитися як була</summary>
+    <p>Це героїстика — спрацьовує коли в col 0 знайдено ≥50% мов, а в row 0 ≥50% ключів. Якщо хочеш вимкнути — налаштуй таблицю так, щоб у col 0 точно стояли ключі (<code>title</code>, <code>cta</code>, <code>step_1</code>...). Або правни вручну в маппінг-таблиці після парсингу.</p>
+  </details>
+
+  <details class="faq">
+    <summary>У логу <code>[warn] "title " has no translation</code></summary>
+    <p>Хвостовий пробіл у імені шару. Photoshop часто додає його при копіюванні. Перейменуй шар: дабл-клік на імʼя, прибери пробіл, Enter.</p>
+  </details>
+
+  <details class="faq">
+    <summary>У логу <code>[skip] no layer "footer" in document</code></summary>
+    <p>Ключ є в CSV, але шара з таким імʼям нема в PSD. Або додай шар, або видали ключ з таблиці. Це warning — інші шари оновляться нормально.</p>
+  </details>
+
+  <details class="faq">
+    <summary>Autofit зачепив 60% — текст все одно виходить за межі</summary>
+    <p>Плагін захищає тебе від нечитабельного дрібного шрифту. Варіанти: вкоротити переклад; збільшити текстову рамку у мастері; вручну зменшити кегль після Apply.</p>
+  </details>
+
+  <details class="faq">
+    <summary>Арабський текст не відображається або «коробочки»</summary>
+    <p>Photoshop не знайшов шрифт із підтримкою Arabic. Поставив Noto Sans Arabic (безкоштовний, <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Arabic" target="_blank" rel="noopener">fonts.google.com</a>). Плагін підхопить автоматично — або вкажи його у CSV колонці <code>font_family</code>.</p>
+  </details>
+
+  <details class="faq">
+    <summary>Можна локалізувати кілька шарів з однаковим імʼям?</summary>
+    <p>Так — плагін зайде у ВСІ шари, чиє імʼя збігається з ключем. Корисно якщо в макеті дублі (наприклад, мобільний + десктоп варіант на одному канвасі).</p>
+  </details>
+
+  <details class="faq">
+    <summary>А якщо я хочу різний шрифт для українського та для японського у тому самому шарі?</summary>
+    <p>Колонка <code>font_family</code> у CSV — постав туди різні PostScript-імена для різних мов. Плагін застосує саме той шрифт при <code>Apply</code>. У всі інші мови — мастер-шрифт лишиться.</p>
+  </details>
+
+  <details class="faq">
+    <summary>Чи можна автоматично експортувати всі мови як окремі файли?</summary>
+    <p>Roadmap, ще не реалізовано. Зараз: Apply → Save As → повторити. У наступних версіях буде кнопка «Export all languages» — згенерує по PSD/PNG для кожної мови за одну транзакцію.</p>
+  </details>
+
+</section>
+
+<section class="cta-final">
+  <h2>Готовий спробувати?</h2>
+  <p>Адаптер — у браузері, плагін — встановлюється за 2 хвилини.</p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="../">Відкрити адаптер</a>
+    <a class="btn btn-ghost" href="#quickstart">Перечитати швидкий старт</a>
+  </div>
+</section>
+
+</article>
+</main>
+
+<footer class="site-footer">
+  <p>© 2026 BannerKit · <a href="../">Адаптер</a> · <a href="mailto:richasez666@gmail.com">richasez666@gmail.com</a></p>
+</footer>
+
+<script>
+// Smooth scroll for TOC links + active section highlight
+document.querySelectorAll('.toc a').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href');
+    if (id && id.startsWith('#')) {
+      e.preventDefault();
+      document.querySelector(id)?.scrollIntoView({behavior:'smooth', block:'start'});
+      history.pushState(null, '', id);
+    }
+  });
+});
+
+// Highlight TOC entry for current viewport section
+const headings = document.querySelectorAll('section[id], div.sub[id]');
+const tocLinks = new Map();
+document.querySelectorAll('.toc a').forEach(a => {
+  const href = a.getAttribute('href');
+  if (href && href.startsWith('#')) tocLinks.set(href.slice(1), a);
+});
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    const link = tocLinks.get(e.target.id);
+    if (!link) return;
+    if (e.isIntersecting) link.classList.add('active');
+    else link.classList.remove('active');
+  });
+}, { rootMargin: '-30% 0px -55% 0px' });
+headings.forEach(h => observer.observe(h));
+</script>
+
+</body>
+</html>
