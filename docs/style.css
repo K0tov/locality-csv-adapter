@@ -1228,17 +1228,25 @@ p { margin: 0 0 12px; }
   list-style: none;
   font-size: 15px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: baseline;
+  /* НЕ space-between: <strong>Simplifier:</strong> і текст після нього —
+     два окремі flex-елементи, space-between розкидав би їх по краях.
+     Плюс "+" притискається праворуч через margin-left: auto. */
+  gap: 6px;
+  line-height: 1.35;
 }
 .faq summary::-webkit-details-marker { display: none; }
 .faq summary::after {
   content: "+";
+  margin-left: auto;
+  flex-shrink: 0;
   color: #ff8b4d;
   font-weight: 400;
   font-size: 20px;
+  line-height: 1;
   transition: transform 0.2s;
 }
+.faq summary strong { flex-shrink: 0; }
 .faq[open] summary::after { transform: rotate(45deg); }
 .faq p {
   padding: 0 20px 18px;
@@ -1296,4 +1304,21 @@ p { margin: 0 0 12px; }
   .qs-stage { min-width: 65px; }
   .stage-icon { width: 44px; height: 44px; font-size: 20px; }
   .qs-arrow { font-size: 16px; }
+
+  /* Код-блоки (дерево PSD, приклади CSV) не мають розпирати сторінку
+     вбік — скролимо їх усередині себе, а не body */
+  pre { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  pre code { white-space: pre; }
+
+  /* Мокапи панелі: менше падінгу, дрібніший моноширинний текст */
+  .mockup-body { padding: 14px; }
+  .sm-io-path, .sm-input, .sm-input-inline { font-size: 10px; }
+  .sm-rule { flex-wrap: wrap; }
+
+  /* FAQ: довгі заголовки на вузькому екрані */
+  .faq summary { font-size: 14px; padding: 14px 16px; }
+  .faq p { padding: 0 16px 16px; }
+
+  /* Довгі шляхи й імена файлів переносяться, а не ріжуться */
+  code { overflow-wrap: anywhere; }
 }

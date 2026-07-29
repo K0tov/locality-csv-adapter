@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Як працювати з Locality + Адаптером — Документація</title>
 <meta name="description" content="Покрокова інструкція для дизайнерів і маркетологів: підготувати таблицю перекладів, прогнати через адаптер, локалізувати банер у Photoshop за два кліки." />
+<!-- Фавікон інлайном: без зайвого файлу і без окремого запиту до сервера -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23131313'/%3E%3Crect x='10' y='16' width='44' height='6' rx='3' fill='%23ff8b4d'/%3E%3Crect x='10' y='29' width='30' height='6' rx='3' fill='%23ff5e3a'/%3E%3Crect x='10' y='42' width='38' height='6' rx='3' fill='%23ff8b4d' opacity='.55'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -571,7 +573,6 @@
           <li><strong>JPG-оптимізація</strong> — чекбокс + max KB. Якість підбирається бінарним пошуком: найвища, за якої файл влазить у ліміт.</li>
           <li><strong>Префікс імені</strong> — <code>banner</code> + файл <code>promo.psd</code> → <code>banner_promo_1920x1080.png</code>. Імʼя джерела входить у результат, тому файли батчу не перетирають один одного.</li>
           <li><strong>Додаткові фічі</strong> — «кожен формат в окрему папку» (<code>Out/png/</code>, <code>Out/jpg/</code>) і максимальне стиснення PNG.</li>
-          <li>Під логом — <strong>Відкрити папку</strong> і <strong>Зберегти звіт</strong> у <code>.txt</code>. Лог живе тільки до перезавантаження панелі, тому звіт варто зберігати після великих прогонів.</li>
         </ol>
       </div>
     </div>
@@ -721,7 +722,7 @@
         <ol class="explain-list">
           <li><strong>Аналізатор документу</strong> — обходить активний PSD і створює правило для кожного текстового шару й смарт-обʼєкта. Повторний натиск не дублює вже додані.</li>
           <li><strong>Одне правило міняє текст в усіх шарах з таким іменем.</strong> Якщо шар <code>title</code> лежить у пʼяти локалізаціях — заміняться всі пʼять за раз.</li>
-          <li><strong>Маски в імені шару:</strong> <code>*</code> — будь-які символи, <code>?</code> — один. <code>date*</code> накриє <code>date_RU</code>, <code>date_EN</code>, <code>date_DE</code>. У лозі видно, які саме шари збіглись.</li>
+          <li><strong>Маски в імені шару:</strong> <code>*</code> — будь-які символи, <code>?</code> — один. <code>date*</code> накриє <code>date_RU</code>, <code>date_EN</code>, <code>date_DE</code>.</li>
           <li><strong>Смарт-обʼєкти</strong> — імʼя шару → файл. Трансформ обʼєкта зберігається. Діалог вибору показує всі типи файлів, не лише PSD.</li>
           <li><strong>Режим «Папка з PSD»</strong> — правила застосовуються до кожного PSD у папці.</li>
           <li><strong>Після заміни</strong> — три варіанти: <em>зберегти і закрити</em> (для батчів), <em>зберегти, лишити відкритим</em> (правки на 20 файлів, з якими працюєш далі), <em>не зберігати</em> (перевірити результат перед записом).</li>
@@ -893,7 +894,7 @@ cta,Сделать ставку,Сделать ставку,Place a bet,Place a 
           <li>На виході <code>Out/EN/banner_320x100.png</code> і решта — 120 файлів.</li>
         </ol>
         <div class="callout callout-warn callout-mini">
-          <p>Photoshop під час прогону не відповідає — це нормально, він у модальному стані. Не закривай. Після завершення тисни «Зберегти звіт», якщо треба перевірити, що саме записалось.</p>
+          <p>Photoshop під час прогону не відповідає — це нормально, він у модальному стані. Не закривай.</p>
         </div>
       </div>
     </div>
@@ -972,12 +973,12 @@ cta,Сделать ставку,Сделать ставку,Place a bet,Place a 
 
   <details class="faq">
     <summary><strong>Simplifier:</strong> заміна тексту в папці пропустила частину файлів</summary>
-    <p>Дивись лог — там сказано, який PSD пропущено і чому. Один проблемний файл не зупиняє батч, решта дообробляється. Найчастіші причини: шару з таким іменем немає (спробуй маску <code>title*</code>), файл заблокований на запис, або це <code>.psb</code> — скануються лише <code>.psd</code>.</p>
+    <p>Один проблемний файл не зупиняє прогін — решта дообробляється. Найчастіші причини: шару з таким іменем немає (спробуй маску <code>title*</code>), файл заблокований на запис, або це <code>.psb</code> — скануються лише <code>.psd</code>.</p>
   </details>
 
   <details class="faq">
-    <summary><strong>Simplifier:</strong> експорт написав «20/20», але частина файлів не зʼявилась</summary>
-    <p>Такого більше не буває: помилки збереження рахуються окремо від файлів. Якщо формат не записався, підсумок каже прямо — <em>«НЕ ЗБЕРЕЖЕНО 20 файл(ів) [gif]»</em>. GIF вимагає 8 біт/канал і режим RGB — 16-бітний або CMYK документ Photoshop у GIF не запише, і лог назве саме цю причину.</p>
+    <summary><strong>Simplifier:</strong> GIF не зберігся</summary>
+    <p>GIF вимагає 8 біт на канал і колірний режим RGB. 16-бітний або CMYK документ Photoshop у GIF не запише. Переведи документ у <strong>Image → Mode → RGB Color</strong> і <strong>8 Bits/Channel</strong>.</p>
   </details>
 
 </section>
