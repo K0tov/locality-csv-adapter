@@ -1,7 +1,10 @@
 /* Палітра вирівняна з /docs — той самий near-black фон і помаранчевий акцент.
-   Міняються ЛИШЕ значення токенів: розкладка, класи й розміри не зачіпаються,
-   бо весь стиль звертається до змінних. */
-:root {
+   Розкладка й класи не зачіпаються: весь стиль звертається до змінних.
+
+   Тема перемикається атрибутом data-theme на <html>. Значення ставить
+   інлайн-скрипт у <head> ДО відмальовки, інакше на секунду блимає темна. */
+:root,
+:root[data-theme="dark"] {
   --bg-base: #0a0a0a;
   --bg-elevated: #131313;
   --bg-elevated-2: #1c1c1c;
@@ -12,17 +15,35 @@
   --text-muted: #999999;
   --text-subtle: #777777;
 
+  /* Картка має власний градієнт — теж токеном, інакше у світлій лишиться чорною */
+  --card-from: #131313;
+  --card-to: #181818;
+  --code-border: #2a2a2a;
+  /* Ледь помітна підсвітка на hover: у темній біла, у світлій — чорна */
+  --wash: rgba(255, 255, 255, 0.04);
+  --wash-strong: rgba(255, 255, 255, 0.08);
+  /* Градієнт заголовка в шапці */
+  --h1-from: #ffffff;
+  --h1-to: #b8b8b8;
+
   --accent: #ff8b4d;
   --accent-bright: #ffaa66;
   --accent-glow: rgba(255, 139, 77, 0.25);
   --accent-deep: #ff5e3a;
   /* Канал для rgba() — щоб прозорості теж їхали за акцентом */
   --accent-rgb: 255, 139, 77;
+  /* Текст ПОВЕРХ акценту. У темній акцент світлий → текст темний.
+     У світлій акцент темніший → текст білий. Тому це окремий токен. */
+  --on-accent: #1a0d05;
 
   --positive: #3dd68c;
   --positive-rgb: 61, 214, 140;
+  --positive-text: #5ee0a3;
   --notice: #ffaa3d;
+  --notice-rgb: 255, 170, 61;
+  --notice-text: #ffbb5e;
   --negative: #ff5e6c;
+  --negative-text: #ff8a93;
 
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", "Consolas", "Menlo", monospace;
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -34,6 +55,49 @@
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
   --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Світла тема ──
+   Акцент навмисно темніший за #ff8b4d: світлий помаранч на білому
+   не проходить по контрасту ні для тексту, ні для рамок. */
+:root[data-theme="light"] {
+  --bg-base: #fafafa;
+  --bg-elevated: #ffffff;
+  --bg-elevated-2: #f4f4f5;
+  --bg-input: #ffffff;
+  --border: #e4e4e7;
+  --border-bright: #d4d4d8;
+  --text: #18181b;
+  --text-muted: #52525b;
+  --text-subtle: #71717a;
+
+  --card-from: #ffffff;
+  --card-to: #fafafa;
+  --code-border: #e4e4e7;
+  --wash: rgba(0, 0, 0, 0.04);
+  --wash-strong: rgba(0, 0, 0, 0.07);
+  --h1-from: #18181b;
+  --h1-to: #52525b;
+
+  --accent: #ea580c;
+  --accent-bright: #c2410c;
+  --accent-glow: rgba(234, 88, 12, 0.18);
+  --accent-deep: #c2410c;
+  --accent-rgb: 234, 88, 12;
+  --on-accent: #ffffff;
+
+  --positive: #16a34a;
+  --positive-rgb: 22, 163, 74;
+  --positive-text: #15803d;
+  --notice: #d97706;
+  --notice-rgb: 217, 119, 6;
+  --notice-text: #b45309;
+  --negative: #dc2626;
+  --negative-text: #b91c1c;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
 * { box-sizing: border-box; }
@@ -67,7 +131,7 @@ code {
   border-radius: 5px;
   background: var(--bg-elevated-2);
   color: var(--accent-bright);
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--code-border);
 }
 
 /* ============ HERO ============ */
@@ -132,7 +196,7 @@ code {
   font-weight: 800;
   letter-spacing: -1px;
   /* Був холодний градієнт у синь — тепер нейтральний, як заголовки в /docs */
-  background: linear-gradient(180deg, #ffffff 0%, #b8b8b8 100%);
+  background: linear-gradient(180deg, var(--h1-from) 0%, var(--h1-to) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -231,7 +295,7 @@ code {
 .step.is-active .step-num {
   background: var(--accent);
   border-color: var(--accent);
-  color: #1a0d05;
+  color: var(--on-accent);
   box-shadow: 0 0 0 4px var(--accent-glow);
 }
 
@@ -257,7 +321,7 @@ code {
 /* ============ CARD ============ */
 .card {
   /* Той самий діагональний градієнт і радіус, що в картках /docs */
-  background: linear-gradient(135deg, #131313, #181818);
+  background: linear-gradient(135deg, var(--card-from), var(--card-to));
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 24px 26px;
@@ -324,12 +388,12 @@ code {
 
 .tab:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--wash);
 }
 
 .tab.active {
   background: var(--accent);
-  color: #1a0d05;
+  color: var(--on-accent);
   font-weight: 600;
   box-shadow: 0 1px 4px var(--accent-glow);
 }
@@ -394,7 +458,7 @@ input[type="file"]::file-selector-button {
 input[type="file"]::file-selector-button:hover {
   background: var(--accent-deep);
   border-color: var(--accent);
-  color: #1a0d05;   /* світлий текст на помаранчі не читається */
+  color: var(--on-accent);   /* світлий текст на помаранчі не читається */
 }
 
 .hint {
@@ -432,7 +496,7 @@ button.primary {
   /* Як .btn-primary у /docs: діагональний помаранчевий градієнт
      і ТЕМНИЙ текст — на світлому помаранчі білий читається погано */
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
-  color: #1a0d05;
+  color: var(--on-accent);
   box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.22);
 }
 
@@ -471,7 +535,7 @@ button:disabled {
   line-height: 1.5;
   background: rgba(255, 94, 108, 0.08);
   border: 1px solid rgba(255, 94, 108, 0.3);
-  color: #ff8a93;
+  color: var(--negative-text);
 }
 
 .error.hidden { display: none; }
@@ -590,8 +654,8 @@ button:disabled {
   text-transform: uppercase;
 }
 
-.badge-ok { background: rgba(var(--positive-rgb), 0.15); color: #5ee0a3; border: 1px solid rgba(var(--positive-rgb), 0.3); }
-.badge-warn { background: rgba(255, 170, 61, 0.15); color: #ffbb5e; border: 1px solid rgba(255, 170, 61, 0.3); }
+.badge-ok { background: rgba(var(--positive-rgb), 0.15); color: var(--positive-text); border: 1px solid rgba(var(--positive-rgb), 0.3); }
+.badge-warn { background: rgba(var(--notice-rgb), 0.15); color: var(--notice-text); border: 1px solid rgba(var(--notice-rgb), 0.3); }
 .badge-skip { background: rgba(138, 146, 163, 0.15); color: var(--text-muted); border: 1px solid var(--border); }
 .badge-rtl { background: rgba(var(--accent-rgb), 0.15); color: var(--accent-bright); border: 1px solid rgba(var(--accent-rgb), 0.3); }
 
@@ -700,7 +764,7 @@ button:disabled {
   height: 18px;
   border-radius: 50%;
   background: var(--accent);
-  color: #1a0d05;
+  color: var(--on-accent);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -766,7 +830,7 @@ button:disabled {
 .modal-close:hover {
   background: rgba(255, 94, 108, 0.15);
   border-color: rgba(255, 94, 108, 0.4);
-  color: #ff8a93;
+  color: var(--negative-text);
   transform: rotate(90deg);
 }
 
@@ -815,12 +879,12 @@ button:disabled {
 
 .modal-tab:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--wash);
 }
 
 .modal-tab.active {
   background: var(--accent);
-  color: #1a0d05;
+  color: var(--on-accent);
   font-weight: 600;
 }
 
@@ -875,7 +939,7 @@ ol.howto > li::before {
   height: 22px;
   border-radius: 50%;
   background: var(--accent);
-  color: #1a0d05;
+  color: var(--on-accent);
   font-size: 11px;
   font-weight: 700;
   display: flex;
