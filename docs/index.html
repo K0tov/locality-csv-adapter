@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Як працювати з Locality + Адаптером — Документація</title>
 <meta name="description" content="Покрокова інструкція для дизайнерів і маркетологів: підготувати таблицю перекладів, прогнати через адаптер, локалізувати банер у Photoshop за два кліки." />
+<!-- Тема ставиться ДО завантаження CSS, інакше на світлій системі
+     на мить блимає темна. Ключ localStorage спільний з адаптером. -->
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("theme");
+      var theme = saved || (window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {
+      document.documentElement.setAttribute("data-theme", "dark");
+    }
+  })();
+</script>
 <!-- Фавікон інлайном: без зайвого файлу і без окремого запиту до сервера -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23131313'/%3E%3Crect x='10' y='16' width='44' height='6' rx='3' fill='%23ff8b4d'/%3E%3Crect x='10' y='29' width='30' height='6' rx='3' fill='%23ff5e3a'/%3E%3Crect x='10' y='42' width='38' height='6' rx='3' fill='%23ff8b4d' opacity='.55'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -26,6 +40,9 @@
     <a href="#plugin">Плагін-гайд</a>
     <a href="#scenarios">Сценарії</a>
     <a href="#faq">FAQ</a>
+    <button id="theme-btn" class="theme-btn" type="button" aria-label="Перемкнути тему">
+      <span id="theme-icon">☀</span>
+    </button>
   </nav>
 </header>
 
@@ -1028,6 +1045,43 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { rootMargin: '-30% 0px -55% 0px' });
 headings.forEach(h => observer.observe(h));
+
+// Перемикач теми. Ключ localStorage спільний з адаптером,
+// тому вибір переноситься між сторінками.
+(function () {
+  const root = document.documentElement;
+  const btn = document.getElementById('theme-btn');
+  const icon = document.getElementById('theme-icon');
+  if (!btn) return;
+
+  // Іконка показує, що БУДЕ після натиску, а не поточний стан
+  const render = () => {
+    const isLight = root.getAttribute('data-theme') === 'light';
+    icon.textContent = isLight ? '🌙' : '☀';
+    btn.setAttribute('aria-pressed', String(isLight));
+  };
+
+  btn.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) { /* приватний режим */ }
+    render();
+  });
+
+  // Поки користувач не обрав вручну — йдемо за системою
+  try {
+    const mq = window.matchMedia('(prefers-color-scheme: light)');
+    const onChange = (e) => {
+      if (localStorage.getItem('theme')) return;
+      root.setAttribute('data-theme', e.matches ? 'light' : 'dark');
+      render();
+    };
+    if (mq.addEventListener) mq.addEventListener('change', onChange);
+    else if (mq.addListener) mq.addListener(onChange);
+  } catch (e) { /* matchMedia недоступний */ }
+
+  render();
+})();
 </script>
 
 </body>
