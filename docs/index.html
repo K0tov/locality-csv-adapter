@@ -949,6 +949,19 @@ cta,Сделать ставку,Сделать ставку,Place a bet,Place a 
   </details>
 
   <details class="faq">
+    <summary>Як зробити абзац — текст у кілька рядків?</summary>
+    <p>Два способи, обидва працюють:</p>
+    <ul class="howto">
+      <li><strong>Справжній перенос у комірці</strong> — <kbd>Alt</kbd>+<kbd>Enter</kbd> у Google Sheets чи Excel. CSV візьме таке поле в лапки автоматично.</li>
+      <li><strong>Літеральне <code>\n</code></strong> — два символи, бекслеш і <code>n</code>, прямо в тексті: <code>Перший рядок\nДругий</code>. Зручно, коли <kbd>Alt</kbd>+<kbd>Enter</kbd> недоступний або текст прийшов з іншого джерела.</li>
+    </ul>
+    <p>Порожній рядок між абзацами — два переноси поспіль. Адаптер показує в підсумку, скільки комірок містять абзаци, щоб було видно випадкові.</p>
+    <div class="callout callout-warn callout-mini">
+      <p><strong>Autofit це не врахує.</strong> Він підбирає кегль по <em>ширині</em> шару. Багаторядковий текст росте у <em>висоту</em> — переповнення вниз плагін не побачить. Залиш запас у мастері.</p>
+    </div>
+  </details>
+
+  <details class="faq">
     <summary>Арабський текст не відображається або «коробочки»</summary>
     <p>Photoshop не знайшов шрифт із підтримкою Arabic. Поставив Noto Sans Arabic (безкоштовний, <a href="https://fonts.google.com/noto/specimen/Noto+Sans+Arabic" target="_blank" rel="noopener">fonts.google.com</a>). Плагін підхопить автоматично — або вкажи його у CSV колонці <code>font_family</code>.</p>
   </details>

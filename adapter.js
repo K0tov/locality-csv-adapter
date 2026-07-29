@@ -1311,19 +1311,32 @@ function rebuildOutput() {
   const activeKeys = state.keyMap.filter((m) => m.key && !m.skip);
 
   const headerRow = ["key", ...activeLangs.map((m) => m.code)];
+
+  // Багаторядкові комірки лишаємо як є — Papa.unparse бере їх у лапки
+  // за RFC 4180, а в CR їх переведе вже плагін (Photoshop хоче саме CR).
+  // Тут лише зводимо CRLF до LF, щоб у файлі не було мішанини переносів.
+  let multiline = 0;
+  const cell = (v) => {
+    const s = String(v == null ? "" : v).replace(/\r\n?/g, "\n").trim();
+    if (s.indexOf("\n") !== -1 || s.indexOf("\\n") !== -1) multiline++;
+    return s;
+  };
+
   const dataRows = activeKeys.map((km) => {
     const srcRow = state.rawRows[km.rowIndex] || [];
-    return [km.key, ...activeLangs.map((lm) => (srcRow[lm.colIndex] || "").trim())];
+    return [km.key, ...activeLangs.map((lm) => cell(srcRow[lm.colIndex]))];
   });
 
   const csv = Papa.unparse([headerRow, ...dataRows]);
   state.outputCsv = csv;
+  state.multilineCells = multiline;
 
   $("#output-csv").textContent = csv;
   $("#output-meta").innerHTML = `
     <span><strong>${activeKeys.length}</strong> ключ(ів)</span>
     <span><strong>${activeLangs.length}</strong> мов(и)</span>
     <span><strong>${csv.length}</strong> байт</span>
+    ${multiline ? `<span><strong>${multiline}</strong> комірок з абзацами</span>` : ""}
   `;
 }
 
